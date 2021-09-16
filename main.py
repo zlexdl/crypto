@@ -4,18 +4,16 @@ import urllib.request
 import requests
 import os
 from bs4 import BeautifulSoup
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+
 
 DOMAIN = 'https://www.block123.com'
 
-def home(url):
 
+def home(url):
     bs = get_html(url)
 
     tag_list_tail = bs.find_all(name='li', attrs={'class': "tag-list-tail"})
     for tail in tag_list_tail:
-
         sub_url = DOMAIN + tail.a['href']
         print(sub_url)
 
@@ -35,7 +33,6 @@ def get_html(url):
 
 
 def pages(url, category, sub_category):
-
     bs = get_html(url)
 
     last_li = bs.find(name='li', attrs={'class': "last"})
@@ -57,64 +54,62 @@ def page(url, category, sub_category):
         item(sub_url, category, sub_category)
 
 
-def item(url, category, sub_category):
-    bs = get_html(url)
+def item(social_url, category, sub_category):
+    bs = get_html(social_url)
 
     entry_bar = bs.find(name='div', attrs={'id': "appdownload-entry-bar"}).next_element()
-
 
     name = bs.find(name='h1', attrs={'class': "nav-name"}).string
     desc = bs.find(name='h2', attrs={'class': "bio-wrapper"}).string
     print(name)
     print(desc)
     for tag in bs.find_all(name='a', attrs={'class': "block123-tag-card-item"}):
-        tagName = tag.get_text().replace('\n', '')
-        print(tagName)
+        tag_name = tag.get_text().replace('\n', '')
+        print(tag_name)
 
-
-    descContent = bs.find(name='div', attrs={'class': "desc-content item-content"})
-    print(descContent.get_text())
+    desc_content = bs.find(name='div', attrs={'class': "desc-content item-content"})
+    print(desc_content.get_text())
     _website = bs.find(name='div', attrs={'class': "web-site"})
     website = _website.find(name='a').get_text().replace('\n', '')
     print(website)
     socialist = bs.find(name='div', attrs={'class': "social-list"})
     if socialist is not None:
-        urlList = socialist.find_all(name='a', href=True)
-        for social in urlList:
-            url = social['href'].replace('?ref=block123', '')
+        url_list = socialist.find_all(name='a', href=True)
+        for social in url_list:
+            social_url = social['href'].replace('?ref=block123', '')
             # print(url)
-            if url.find('twitter') > 0:
-                twitter = url
+            if social_url.find('twitter') > 0:
+                twitter = social_url
                 print('twitter=' + twitter)
                 continue
-            if url.find('medium') > 0:
-                medium = url
+            if social_url.find('medium') > 0:
+                medium = social_url
                 print('medium=' + medium)
                 continue
-            if url.find('t.me') > 0:
-                telegram = url
+            if social_url.find('t.me') > 0:
+                telegram = social_url
                 print('telegram=' + telegram)
                 continue
-            if url.find('github') > 0:
-                github = url
+            if social_url.find('github') > 0:
+                github = social_url
                 print('github=' + github)
                 continue
-            if url.find('discord') > 0:
-                discord = url
+            if social_url.find('discord') > 0:
+                discord = social_url
                 print('discord=' + discord)
-            if url.find('instagram') > 0:
-                instagram = url
+            if social_url.find('instagram') > 0:
+                instagram = social_url
                 print('instagram=' + instagram)
-            if url.find('facebook') > 0:
-                facebook = url
+            if social_url.find('facebook') > 0:
+                facebook = social_url
                 print('facebook=' + facebook)
-            if url.find('linkedin') > 0:
-                linkedin = url
+            if social_url.find('linkedin') > 0:
+                linkedin = social_url
                 print('linkedin=' + linkedin)
 
-    itemTitles = bs.find_all(name='div', attrs={'class': "item-title"})
-    print(itemTitles)
-    for title in itemTitles:
+    item_titles = bs.find_all(name='div', attrs={'class': "item-title"})
+    print(item_titles)
+    for title in item_titles:
 
         if title.get_text().find('团队成员') >= 0:
             print('团队成员')
@@ -163,9 +158,11 @@ def create_folder(file_name):
     if path != '' and not os.path.exists(path):
         os.makedirs(path)
 
+
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+
 
 def getInfo(title):
     bs = title.find_next_sibling()
@@ -200,6 +197,8 @@ def create_folder(file_name):
     path = os.path.split(file_name)[0]
     if path != '' and not os.path.exists(path):
         os.makedirs(path)
+
+
 def set_header(url):
     req = urllib.request.Request(url)
     req.add_header('accept',
@@ -227,8 +226,6 @@ def set_header(url):
                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                    'Chrome/92.0.4515.159 Safari/537.36')
     return req
-
-
 
 
 # Press the green button in the gutter to run the script.
