@@ -103,7 +103,7 @@ while True:
         print(tweet.created_at)
         print(utcTime_minutes)
         print("---------------------")
-        send_mail(tweet)
+        # send_mail(tweet)
         if tweet.created_at >= utcTime_minutes:
 
             send_mail(tweet)
