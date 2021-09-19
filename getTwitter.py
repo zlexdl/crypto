@@ -12,7 +12,7 @@ import os
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
-IMAGES_FOLDER = "D:\\Dev\\Python_projects\\crypto\\images\\"
+IMAGES_FOLDER = "./images/"
 utcTime = datetime.utcnow()
 print(utcTime)
 
@@ -103,7 +103,7 @@ while True:
         print(tweet.created_at)
         print(utcTime_minutes)
         print("---------------------")
-        # send_mail(tweet)
+        send_mail(tweet)
         if tweet.created_at >= utcTime_minutes:
 
             send_mail(tweet)
