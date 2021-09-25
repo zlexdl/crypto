@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from elasticsearch import Elasticsearch
 import time
 
-is_test = 1
+is_test = 0
 WHALE_SUSHI = 'sushiwhale'
 WHALE_UNI = 'uniwhales'
 WHALE_PANCAKE = 'pancakewhales'
