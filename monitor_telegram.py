@@ -23,7 +23,7 @@ CRYPTO_COVE_PREMIUM = 'CryptoCovePremium'
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
 
-logging.basicConfig(filename='logs/cryptoCove.log', level=logging.INFO, format=LOG_FORMAT, datefmt=DATE_FORMAT,
+logging.basicConfig(filename='logs/monitor_telegram.log', level=logging.INFO, format=LOG_FORMAT, datefmt=DATE_FORMAT,
                     encoding='utf-8')
 
 engine = create_engine("mysql+pymysql://root:password@192.168.1.32:3306/hwdb?charset=utf8")
