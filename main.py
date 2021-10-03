@@ -1,4 +1,5 @@
 # This is a sample Python script.
+import json
 import urllib.request
 import urllib.request
 import requests
@@ -6,7 +7,7 @@ import os
 from bs4 import BeautifulSoup
 
 
-DOMAIN = 'https://www.block123.com'
+DOMAIN = 'https://www.block123.com/zh-hans'
 
 
 def home(url):
@@ -35,93 +36,84 @@ def get_html(url):
 def pages(url, category, sub_category):
     bs = get_html(url)
 
-    last_li = bs.find(name='li', attrs={'class': "last"})
-    max_page = last_li.a['href'].split('=')[2]
+    last_li = bs.find(name='li', attrs={'class': "last page-item"})
+    max_page = int(last_li.previous_element)
     for num in range(1, int(max_page)):
         sub_url = url + '&page=' + str(num)
         print(sub_url)
         page(sub_url, category, sub_category)
 
+def parse_json(s):
+    begin = s.find('{')
+    end = s.rfind('}') + 1
+    return json.loads(s[begin:end])
 
 def page(url, category, sub_category):
     bs = get_html(url)
 
-    lis = bs.find_all(name='li', attrs={'class': "nav-item"})
+    # lis = bs.find_all(name='li', attrs={'class': "nav-item"})
 
-    for li in lis:
-        sub_url = DOMAIN + li.a['href']
+    lis = parse_json(str(bs.find_all(name='script', attrs={'id': "__NEXT_DATA__"})[0]))
+    for result in lis['props']['pageProps']['data']['results']:
+        sub_url = DOMAIN + result['get_absolute_url']
         print(sub_url)
         item(sub_url, category, sub_category)
 
 
 def item(social_url, category, sub_category):
-    bs = get_html(social_url)
+    sub_url = DOMAIN + social_url
+    print(sub_url)
+    bs = get_html(sub_url)
+    json = parse_json(str(bs.find_all(name='script', attrs={'id': "__NEXT_DATA__"})[0]))
+    data = json['props']['pageProps']['data']
+    name = data['name']
+    bio = data['bio']
+    description = data['description']
+    logo_url = data['logo_url']
+    save_name = download_img(logo_url, name)
+    web_site = data['web_site']
+    symbol = data['symbol']
+    social = data['social']
+    twitter = social.get('twitter', '')
+    facebook = social.get('facebook', '')
+    medium = social.get('medium', '')
+    blog = social.get('blog', '')
+    telegram = social.get('telegram', '')
+    github = social.get('github', '')
+    discord = social.get('discord', '')
+    members = data['members']
+    for member in members:
+        name = member['name']
+        bio = member['bio']
+        logo_url = member['logo_url']
+        web_site = member['web_site']
+        save_name = download_img(logo_url, name)
 
-    entry_bar = bs.find(name='div', attrs={'id': "appdownload-entry-bar"}).next_element()
 
-    name = bs.find(name='h1', attrs={'class': "nav-name"}).string
-    desc = bs.find(name='h2', attrs={'class': "bio-wrapper"}).string
-    print(name)
-    print(desc)
-    for tag in bs.find_all(name='a', attrs={'class': "block123-tag-card-item"}):
-        tag_name = tag.get_text().replace('\n', '')
-        print(tag_name)
+    experiences = data['experiences']
+    print("experiences=" + experiences)
+    portfolios = data['portfolio']
+    for portfolio in portfolios:
+        name = portfolio['name']
+        bio = portfolio['bio']
+        logo_url = portfolio['logo_url']
+        web_site = portfolio['web_site']
+        save_name = download_img(logo_url, name)
 
-    desc_content = bs.find(name='div', attrs={'class': "desc-content item-content"})
-    print(desc_content.get_text())
-    _website = bs.find(name='div', attrs={'class': "web-site"})
-    website = _website.find(name='a').get_text().replace('\n', '')
-    print(website)
-    socialist = bs.find(name='div', attrs={'class': "social-list"})
-    if socialist is not None:
-        url_list = socialist.find_all(name='a', href=True)
-        for social in url_list:
-            social_url = social['href'].replace('?ref=block123', '')
-            # print(url)
-            if social_url.find('twitter') > 0:
-                twitter = social_url
-                print('twitter=' + twitter)
-                continue
-            if social_url.find('medium') > 0:
-                medium = social_url
-                print('medium=' + medium)
-                continue
-            if social_url.find('t.me') > 0:
-                telegram = social_url
-                print('telegram=' + telegram)
-                continue
-            if social_url.find('github') > 0:
-                github = social_url
-                print('github=' + github)
-                continue
-            if social_url.find('discord') > 0:
-                discord = social_url
-                print('discord=' + discord)
-            if social_url.find('instagram') > 0:
-                instagram = social_url
-                print('instagram=' + instagram)
-            if social_url.find('facebook') > 0:
-                facebook = social_url
-                print('facebook=' + facebook)
-            if social_url.find('linkedin') > 0:
-                linkedin = social_url
-                print('linkedin=' + linkedin)
+    portfolios = data['portfolio']
+    for investor in portfolios:
+        name = investor['name']
+        bio = investor['bio']
+        logo_url = investor['logo_url']
+        web_site = investor['web_site']
+        save_name = download_img(logo_url, name)
 
-    item_titles = bs.find_all(name='div', attrs={'class': "item-title"})
-    print(item_titles)
-    for title in item_titles:
+    features = data['features']
+    print("features=" + features)
+    related = data['related']
+    print("related=" + related)
 
-        if title.get_text().find('团队成员') >= 0:
-            print('团队成员')
-            getInfo(title)
 
-        if title.get_text().find('投资项目') >= 0:
-            print('投资项目')
-            getInfo(title)
-
-        if title.get_text().find('投资机构') >= 0:
-            print('投资机构')
-            getInfo(title)
 
 
 def getInfo(title):
@@ -138,19 +130,6 @@ def getInfo(title):
             download_img(image, name)
 
 
-def download_img(img_url, name):
-    # 后缀名
-    save_name_suffix = img_url[-3:]
-    # 保存的名字
-    save_name = 'ptotos/' + name + '.{}'.format(save_name_suffix)
-    ret = requests.get(img_url)
-    # 图片信息
-    info = ret.content
-    # 不存在文件就创建
-    create_folder(save_name)
-    # 二进制方式写入
-    with open(save_name, 'wb') as f:
-        f.write(info)
 
 
 def create_folder(file_name):
@@ -179,6 +158,8 @@ def getInfo(title):
 
 
 def download_img(img_url, name):
+    img_url = img_url.split('?')[0]
+    name = name.replace(' ', '_')
     # 后缀名
     save_name_suffix = img_url[-3:]
     # 保存的名字
@@ -191,6 +172,8 @@ def download_img(img_url, name):
     # 二进制方式写入
     with open(save_name, 'wb') as f:
         f.write(info)
+
+    return save_name
 
 
 def create_folder(file_name):
