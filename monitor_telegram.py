@@ -11,6 +11,8 @@ from sqlalchemy.orm import relationship, sessionmaker
 from datetime import datetime, timedelta
 from elasticsearch import Elasticsearch
 import time
+from config import global_config
+from monitor_logger import logging
 
 is_test = 0
 WHALE_SUSHI = 'sushiwhale'
@@ -20,13 +22,8 @@ WHALE_TEST = 'test_zlexdl'
 PUMP_DETECTOR = 'cointrendz_pumpdetector'
 CRYPTO_COVE_PREMIUM = 'CryptoCovePremium'
 
-LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
-DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
 
-logging.basicConfig(filename='logs/monitor_telegram.log', level=logging.INFO, format=LOG_FORMAT, datefmt=DATE_FORMAT,
-                    encoding='utf-8')
-
-engine = create_engine("mysql+pymysql://root:password@192.168.1.32:3306/hwdb?charset=utf8")
+engine = create_engine(global_config.getRaw('config', 'db_url'))
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
