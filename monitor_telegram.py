@@ -7,12 +7,13 @@ import logging
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, BigInteger, Integer, String, Text, DateTime, ForeignKey, Float
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from datetime import datetime, timedelta
 from elasticsearch import Elasticsearch
 import time
 from config import global_config
 from monitor_logger import logging
+from telethon.tl.types import PeerChannel
 
 is_test = 0
 WHALE_SUSHI = 'sushiwhale'
@@ -21,7 +22,6 @@ WHALE_PANCAKE = 'pancakewhales'
 WHALE_TEST = 'test_zlexdl'
 PUMP_DETECTOR = 'cointrendz_pumpdetector'
 CRYPTO_COVE_PREMIUM = 'CryptoCovePremium'
-
 
 engine = create_engine(global_config.getRaw('config', 'db_url'))
 Base = declarative_base()
@@ -152,7 +152,6 @@ def read_message(telegram_message, flag):
     session.close()
 
 
-
 def sendMail(mail_subject, mail_contents):
     # 发邮件 第三方 SMTP 服务
     mail_host = "smtp.126.com"  # 设置服务器
@@ -180,10 +179,10 @@ def sendMail(mail_subject, mail_contents):
         message['To'] = "zlexdl<frm5966@dingtalk.com>"
     else:
         receivers = ['frm5966@dingtalk.com', 'txy-87evmhmuw@dingtalk.com', 'sangxiaomeng@dingtalk.com',
-                     'd875x9g@dingtalk.com', 'btcbch2017@dingtalk.com', 'dlwg10g@dingtalk.com']
+                     'd875x9g@dingtalk.com', 'btcbch2017@dingtalk.com', 'dlwg10g@dingtalk.com', 'xiaotu996@dingtalk.com']
         message['To'] = "frm5966@dingtalk.com,txy-87evmhmuw@dingtalk.com,sangxiaomeng@dingtalk.com, " \
                         "d875x9g@dingtalk.com," \
-                        "btcbch2017@dingtalk.com, dlwg10g@dingtalk.com "
+                        "btcbch2017@dingtalk.com, dlwg10g@dingtalk.com, xiaotu996@dingtalk.com "
     print("邮件发送start")
 
     try:
@@ -316,7 +315,7 @@ async def my_event_handler(event):
         read_message(list, event.chat.username)
     elif event.chat.username == PUMP_DETECTOR:
         pump_detector(event)
-    elif event.chat.username == CRYPTO_COVE_PREMIUM:
+    elif event.chat_id == -1001385300019:
         sendMail('[VIP]COVE PREMIUM', event.raw_text)
     else:
         print("========================>Other")
@@ -332,7 +331,8 @@ client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_UNI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_PANCAKE))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_TEST))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=PUMP_DETECTOR))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=CRYPTO_COVE_PREMIUM))
+client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1385300019)]))
+client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1329310076)]))
 
 client.start()
 client.run_until_disconnected()

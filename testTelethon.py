@@ -12,6 +12,7 @@ from sqlalchemy import Column, BigInteger, Integer, String, Text, DateTime, Fore
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.sql import text
 from datetime import datetime, timedelta
+from telethon.tl.types import PeerChat, PeerChannel
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
@@ -101,10 +102,12 @@ Session = sessionmaker(bind=engine)
 
 session = Session()
 
-
-@client.on(events.NewMessage(chats='cointrendz_pumpdetector'))
+@client.on(events.NewMessage(chats=[PeerChannel(-1329310076)]))
+# @client.on(events.NewMessage(chats='cointrendz_pumpdetector'))
 # @client.on(events.NewMessage(chats='test_zlexdl'))
 async def my_event_handler(event):
+    print("========================>" + event.chat.username)
+    print("========================>" + event.chat_id == -1001329310076)
     try:
         NOW = datetime.now()
         # 解析数据
