@@ -23,7 +23,7 @@ WHALE_TEST = 'test_zlexdl'
 PUMP_DETECTOR = 'cointrendz_pumpdetector'
 CRYPTO_COVE_PREMIUM = 'CryptoCovePremium'
 
-engine = create_engine(global_config.getRaw('config', 'db_url'))
+engine = create_engine(global_config.getRaw('db', 'hwdb_db_url'))
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -154,15 +154,12 @@ def read_message(telegram_message, flag):
 
 def sendMail(mail_subject, mail_contents):
     # 发邮件 第三方 SMTP 服务
-    mail_host = "smtp.126.com"  # 设置服务器
-    mail_user = "bsv_whale_alert"  # 用户名
-    mail_pass = "FFUNDLIEMVWJDCNV"  # 口令
-    sender = 'bsv_whale_alert@126.com'
+    mail_host = global_config.getRaw('mail', 'mail_host')
+    mail_user = global_config.getRaw('mail', 'mail_user')
+    mail_pass = global_config.getRaw('mail', 'mail_pass')
+    sender = global_config.getRaw('mail', 'sender')
 
-    # mail_host="smtp.sohu.com"  #设置服务器
-    # mail_user="zhanglei_2017"    #用户名
-    # mail_pass="WMJ2HF40ZL76Q"   #口令
-    # sender = 'zhanglei_2017@sohu.com'
+
 
     # dlwg10g@dingtalk.com 梨
     # btcbch2017@dingtalk.com bsv666
@@ -170,10 +167,10 @@ def sendMail(mail_subject, mail_contents):
     # sangxiaomeng@dingtalk.com C 哥
     # txy-87evmhmuw@dingtalk.com hanno
     message = MIMEText(mail_contents, 'plain', 'utf-8')
-    message['From'] = "bsv_whale_alert<bsv_whale_alert@126.com>"
+    message['From'] = global_config.getRaw('mail', 'from')
     message['Subject'] = Header(mail_subject, 'utf-8')
 
-    if is_test == 1:
+    if is_test == int(global_config.getRaw('mail', 'is_test')):
 
         receivers = ['frm5966@dingtalk.com']
         message['To'] = "zlexdl<frm5966@dingtalk.com>"
@@ -292,9 +289,9 @@ def pump_detector(event):
         logging.error("Error:" + str(e))
 
 
-api_id = 7928011
-api_hash = 'b74852d9349c2b9b5f5a287ef1120733'
-phone_number = '+8618242025966'
+api_id = global_config.getRaw('telegram_182', 'api_id')
+api_hash = global_config.getRaw('telegram_182', 'api_hash')
+phone_number = global_config.getRaw('telegram_182', 'phone_number')
 
 client = TelegramClient(phone_number, api_id, api_hash)
 print("1")

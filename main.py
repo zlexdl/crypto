@@ -20,7 +20,7 @@ DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
 logging.basicConfig(filename='logs/block123.log', level=logging.DEBUG,
                     format=LOG_FORMAT, datefmt=DATE_FORMAT, encoding='utf-8')
 DOMAIN = 'https://www.block123.com'
-engine = create_engine("mysql+pymysql://root:password@192.168.1.32:3306/hwdb?charset=utf8")
+engine = create_engine(global_config.getRaw('db', 'hwdb_db_url'))
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()

@@ -1,16 +1,14 @@
-#coding:utf-8
+# coding:utf-8
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column,BigInteger,Integer,String,Text,DateTime,ForeignKey,Float
-from sqlalchemy.orm import relationship,sessionmaker
-from sqlalchemy.sql import text
+from sqlalchemy import Column, BigInteger, Integer, String, Text, DateTime, ForeignKey, Float
+from sqlalchemy.orm import sessionmaker
+from config import global_config
 import datetime
 import time
-from urllib import request as urlrequest
 import json
 import urllib.request
-from urllib import parse
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
@@ -19,28 +17,27 @@ import logging
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
-logging.basicConfig(filename='logs/bsv_monitor.log', level=logging.DEBUG, format=LOG_FORMAT, datefmt=DATE_FORMAT, encoding='utf-8')
+logging.basicConfig(filename='logs/bsv_monitor.log', level=logging.DEBUG, format=LOG_FORMAT, datefmt=DATE_FORMAT,
+                    encoding='utf-8')
 
-engine = create_engine("mysql+pymysql://root:password@192.168.1.32:3306/bsv?charset=utf8")  
+engine = create_engine(global_config.getRaw('db', 'bsv_db_url'))
 Base = declarative_base()
 
+
 class Address(Base):
-    __tablename__="address"  #数据库中保存的表名字
-    
-    id = Column(Integer,primary_key=True)
-    name = Column(String(64),nullable=False)
-    address = Column(String(50),index=True,nullable=False)
-    balance = Column(BigInteger,nullable=False)
-    updated_at = Column(DateTime,default =datetime.datetime.now)
+    __tablename__ = "address"  # 数据库中保存的表名字
 
-
-
+    id = Column(Integer, primary_key=True)
+    name = Column(String(64), nullable=False)
+    address = Column(String(50), index=True, nullable=False)
+    balance = Column(BigInteger, nullable=False)
+    updated_at = Column(DateTime, default=datetime.datetime.now)
 
 
 if __name__ == "__main__":
     # Base.metadata.create_all(engine)
-    #Base.metadata.drop_all(engine)
-    
+    # Base.metadata.drop_all(engine)
+
     while True:
 
         print("@@@@@@@@@@@@@@@@@@@@Start@@@@@@@@@@@@@@@@@@@@@@ ")
@@ -52,10 +49,9 @@ if __name__ == "__main__":
         ret = session.query(Address).all()
 
         for i in ret:
-            print (i.id, i.address, i.balance)
+            print(i.id, i.address, i.balance)
 
-
-            url = 'https://apiv2.metasv.com/address/'+ i.address +'/balance'
+            url = 'https://apiv2.metasv.com/address/' + i.address + '/balance'
 
             try:
                 f = urllib.request.urlopen(url)
@@ -76,7 +72,6 @@ if __name__ == "__main__":
 
             diff = abs(balance - old_balance)
             print("diff=" + str(diff))
-
 
             if diff > 3999 or ('112QeSdnn9MYt5CtYjC6id3NUoVZBJ851R' == i.address and diff > 1):
 
@@ -100,56 +95,54 @@ if __name__ == "__main__":
                 # response = urlrequest.urlopen(req, data=data_b)
                 # print(response.read().decode('utf8'))
 
-
                 # 第三方 SMTP 服务
-                mail_host="smtp.126.com"  #设置服务器
-                mail_user="bsv_whale_alert"    #用户名
-                mail_pass="FFUNDLIEMVWJDCNV"   #口令 
-                
+                mail_host = global_config.getRaw('mail', 'mail_host')
+                mail_user = global_config.getRaw('mail', 'mail_user')
+                mail_pass = global_config.getRaw('mail', 'mail_pass')
+
                 symbol = "+" if balance > old_balance else "-"
-                 
+
                 sender = 'bsv_whale_alert@126.com'
                 receivers = ['zlexdl@163.com', 'jiangdi_li@126.com', 'lzjjxljaljt@163.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
                 # receivers = ['zlexdl@163.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
-                content = 'BSV whale balance change warning<br><table border="1"><tr><td>address:</td><td>' + i.address + '</td></tr><tr><td>Before:</td><td>' + '{:,}'.format(old_balance) + ' BSV</td></tr><tr><td>After   :</td><td>' + '{:,}'.format(balance) + ' BSV</td></tr><tr><td>Difference:</td><td>' + symbol +'{:,}'.format(diff) + ' BSV</td></tr></table>'
+                content = 'BSV whale balance change warning<br><table border="1"><tr><td>address:</td><td>' + i.address + '</td></tr><tr><td>Before:</td><td>' + '{:,}'.format(
+                    old_balance) + ' BSV</td></tr><tr><td>After   :</td><td>' + '{:,}'.format(
+                    balance) + ' BSV</td></tr><tr><td>Difference:</td><td>' + symbol + '{:,}'.format(
+                    diff) + ' BSV</td></tr></table>'
                 message = MIMEText(content, 'html', 'utf-8')
                 message['From'] = "bsv_whale_alert<bsv_whale_alert@126.com>"
-                message['To'] =  "zlexdl<zlexdl@163.com>, jiangdi_li<jiangdi_li@126.com>, lzjjxljaljt<lzjjxljaljt@163.com>"
+                message[
+                    'To'] = "zlexdl<zlexdl@163.com>, jiangdi_li<jiangdi_li@126.com>, lzjjxljaljt<lzjjxljaljt@163.com>"
                 # message['To'] =  "zlexdl<zlexdl@163.com>"
-                 
+
                 subject = 'bsv whale:' + i.address
                 message['Subject'] = Header(subject, 'utf-8')
-                
-                 
+
                 try:
-                    smtpObj = smtplib.SMTP() 
-                    smtpObj.connect(mail_host, 25)    # 25 为 SMTP 端口号
-                    smtpObj.login(mail_user,mail_pass)
+                    smtpObj = smtplib.SMTP()
+                    smtpObj.connect(mail_host, 25)  # 25 为 SMTP 端口号
+                    smtpObj.login(mail_user, mail_pass)
                     smtpObj.sendmail(sender, receivers, message.as_string())
-                    print ("邮件发送成功" + subject)
+                    print("邮件发送成功" + subject)
                     logging.info("邮件发送成功" + subject)
                 except smtplib.SMTPException as e:
-                    print ("Error: 无法发送邮件")
+                    print("Error: 无法发送邮件")
                     logging.error("邮件发送成功" + subject)
                     traceback.print_exc()
-                
+
             if diff > 0:
-                print("update balance" + str(balance))    
+                print("update balance" + str(balance))
                 logging.info("update balance" + str(balance))
-                session.query(Address).filter(Address.address==i.address).update({"balance":balance})
-                
+                session.query(Address).filter(Address.address == i.address).update({"balance": balance})
 
         session.commit()
 
         # session.commit()
 
         session.close()
-   
+
         time.sleep(300)
         print("@@@@@@@@@@@@@@@@@@@@END@@@@@@@@@@@@@@@@@@@@@@")
-
-
-
 
         # address = Address(name="1", address="1A9nhwLngEyf3Jzycvb9GeG4ayBv5m5zKc", balance=0)
         # session.add(address)

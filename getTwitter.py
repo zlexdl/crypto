@@ -9,6 +9,7 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 import wget
 import os
+from config import global_config
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
@@ -19,9 +20,10 @@ print(utcTime)
 logging.basicConfig(filename='logs/getTwitter.log', level=logging.INFO, format=LOG_FORMAT, datefmt=DATE_FORMAT,
                     encoding='utf-8')
 
-auth = tweepy.OAuthHandler("O8yZNzfoelt7fagdXkacsOXp7", "S9CCYUZ7GVq2VaPUB5iW5QnRnLyDPtpiS0L4SawNuIpvegiBYJ")
-auth.set_access_token("112694900-gMcMQmgU1chzqhwuf58sRYqwEikZ76XCJBaQHrDV",
-                      "yTj1h4trMOf39NdXuQ4DwHoQo1cYmzrVJziN41hHWQXi3")
+auth = tweepy.OAuthHandler(global_config.getRaw('twitter', 'consumer_key'),
+                           global_config.getRaw('twitter', 'consumer_secret'))
+auth.set_access_token(global_config.getRaw('twitter', 'key'),
+                      global_config.getRaw('twitter', 'secret'))
 
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
@@ -30,10 +32,10 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 
 def send_mail(tweet):
-    global text
-    mail_host = "smtp.126.com"  # 设置服务器
-    mail_user = "bsv_whale_alert"  # 用户名
-    mail_pass = "FFUNDLIEMVWJDCNV"  # 口令
+    mail_host = global_config.getRaw('mail', 'mail_host')
+    mail_user = global_config.getRaw('mail', 'mail_user')
+    mail_pass = global_config.getRaw('mail', 'mail_pass')
+
     sender = 'bsv_whale_alert@126.com'
     receivers = ['frm5966@dingtalk.com', 'd875x9g@dingtalk.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
     message = MIMEMultipart()

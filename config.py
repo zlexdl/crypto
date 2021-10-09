@@ -20,5 +20,5 @@ class Config(object):
 
 
 global_config = Config()
-print(global_config.getRaw('config', 'receivers'))
+# print(global_config.getRaw('config', 'receivers'))
 

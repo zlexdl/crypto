@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, BigInteger, Integer, String, Text, DateTime, ForeignKey, Float
 from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy.sql import text
+from config import global_config
 from datetime import datetime, timedelta
 from telethon.tl.types import PeerChat, PeerChannel
 
@@ -20,15 +20,11 @@ NOW = datetime.now()
 logging.basicConfig(filename='logs/telethon.log', level=logging.INFO, format=LOG_FORMAT, datefmt=DATE_FORMAT,
                     encoding='utf-8')
 
-# api_id = 5433729
-# api_hash = '0e89dcb2d76fad7f5d7cd55c3a953cf0'
-# phone_number = '+8615566817746'
+api_id = int(global_config.getRaw('telegram_182', 'api_id'))
+api_hash = global_config.getRaw('telegram_182', 'api_hash')
+phone_number = global_config.getRaw('telegram_182', 'phone_number')
 
-api_id = 7928011
-api_hash = 'b74852d9349c2b9b5f5a287ef1120733'
-phone_number = '+8618242025966'
-
-engine = create_engine("mysql+pymysql://root:password@192.168.1.32:3306/hwdb?charset=utf8")
+engine = create_engine(global_config.getRaw('db', 'hwdb_db_url'))
 Base = declarative_base()
 
 
@@ -49,14 +45,11 @@ class Monitor(Base):
 
 def sendMail(mail_subject, mail_contents):
     # 发邮件 第三方 SMTP 服务
-    mail_host = "smtp.126.com"  # 设置服务器
-    mail_user = "bsv_whale_alert"  # 用户名
-    mail_pass = "FFUNDLIEMVWJDCNV"  # 口令
-    sender = 'bsv_whale_alert@126.com'
+    mail_host = global_config.getRaw('mail', 'mail_host')
+    mail_user = global_config.getRaw('mail', 'mail_user')
+    mail_pass = global_config.getRaw('mail', 'mail_pass')
+    sender = global_config.getRaw('mail', 'sender')
 
-    # mail_host="smtp.sohu.com"  #设置服务器
-    # mail_user="zhanglei_2017"    #用户名
-    # mail_pass="WMJ2HF40ZL76Q"   #口令    
     # sender = 'zhanglei_2017@sohu.com'
     # dlwg10g@dingtalk.com 梨
     # btcbch2017@dingtalk.com bsv666
@@ -112,7 +105,7 @@ async def my_event_handler(event):
     print(event.raw_text)
     print(event.chat.username)
     list = event.raw_text.split(' ')
-    print("========================>" + event.chat.username)
+    # print("========================>" + event.chat.username)
     print("========================>" + event.chat_id == -1001329310076)
     try:
         NOW = datetime.now()
