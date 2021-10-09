@@ -78,7 +78,7 @@ if __name__ == "__main__":
             print("diff=" + str(diff))
 
 
-            if diff > 3999 or '112QeSdnn9MYt5CtYjC6id3NUoVZBJ851R' == i.address:
+            if diff > 3999 or ('112QeSdnn9MYt5CtYjC6id3NUoVZBJ851R' == i.address and diff > 1):
 
                 # data_dic = {
                 #     'chat_id':'@zlexdl_test',
