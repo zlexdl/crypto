@@ -20,10 +20,13 @@ NOW = datetime.now()
 logging.basicConfig(filename='logs/telethon.log', level=logging.INFO, format=LOG_FORMAT, datefmt=DATE_FORMAT,
                     encoding='utf-8')
 
-api_id = 5433729
-api_hash = '0e89dcb2d76fad7f5d7cd55c3a953cf0'
+# api_id = 5433729
+# api_hash = '0e89dcb2d76fad7f5d7cd55c3a953cf0'
+# phone_number = '+8615566817746'
 
-phone_number = '+8615566817746'
+api_id = 7928011
+api_hash = 'b74852d9349c2b9b5f5a287ef1120733'
+phone_number = '+8618242025966'
 
 engine = create_engine("mysql+pymysql://root:password@192.168.1.32:3306/hwdb?charset=utf8")
 Base = declarative_base()
@@ -102,10 +105,13 @@ Session = sessionmaker(bind=engine)
 
 session = Session()
 
-@client.on(events.NewMessage(chats=[PeerChannel(-1329310076)]))
+@client.on(events.NewMessage(chats=[PeerChannel(-1001329310076)]))
 # @client.on(events.NewMessage(chats='cointrendz_pumpdetector'))
 # @client.on(events.NewMessage(chats='test_zlexdl'))
 async def my_event_handler(event):
+    print(event.raw_text)
+    print(event.chat.username)
+    list = event.raw_text.split(' ')
     print("========================>" + event.chat.username)
     print("========================>" + event.chat_id == -1001329310076)
     try:

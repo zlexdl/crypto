@@ -308,14 +308,17 @@ async def my_event_handler(event):
     print(event.raw_text)
     print(event.chat.username)
     list = event.raw_text.split(' ')
-    print("========================>" + event.chat.username)
-    if event.chat.username == WHALE_TEST:
+    if event.chat_id == -1001329310076:
+        logging.info('test:' + event.raw_text)
+        sendMail('test', event.raw_text)
+    elif event.chat.username == WHALE_TEST:
         read_message(list, WHALE_PANCAKE)
     elif event.chat.username in (WHALE_PANCAKE, WHALE_SUSHI, WHALE_UNI):
         read_message(list, event.chat.username)
     elif event.chat.username == PUMP_DETECTOR:
         pump_detector(event)
     elif event.chat_id == -1001385300019:
+        logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
         sendMail('[VIP]COVE PREMIUM', event.raw_text)
     else:
         print("========================>Other")
@@ -331,8 +334,8 @@ client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_UNI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_PANCAKE))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_TEST))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=PUMP_DETECTOR))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1385300019)]))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1329310076)]))
+client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001385300019)]))
+client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001329310076)]))
 
 client.start()
 client.run_until_disconnected()
