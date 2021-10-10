@@ -170,7 +170,7 @@ def sendMail(mail_subject, mail_contents):
     message['From'] = global_config.getRaw('mail', 'from')
     message['Subject'] = Header(mail_subject, 'utf-8')
 
-    if is_test == int(global_config.getRaw('mail', 'is_test')):
+    if is_test == int(global_config.getRaw('mail', 'is_test')) or mail_subject == 'test':
 
         receivers = ['frm5966@dingtalk.com']
         message['To'] = "zlexdl<frm5966@dingtalk.com>"
@@ -301,17 +301,20 @@ print(client.get_me())
 
 
 async def my_event_handler(event):
-    print("Monitor whales start")
+    logging.info("Monitor whales start")
+    logging.info(event.chat_id)
     print(event.raw_text)
     print(event.chat.username)
-    list = event.raw_text.split(' ')
+
     if event.chat_id == -1001329310076:
         logging.info('test:' + event.raw_text)
         sendMail('test', event.raw_text)
     elif event.chat.username == WHALE_TEST:
-        read_message(list, WHALE_PANCAKE)
+        raw_text = event.raw_text.split(' ')
+        read_message(raw_text, WHALE_PANCAKE)
     elif event.chat.username in (WHALE_PANCAKE, WHALE_SUSHI, WHALE_UNI):
-        read_message(list, event.chat.username)
+        raw_text = event.raw_text.split(' ')
+        read_message(raw_text, event.chat.username)
     elif event.chat.username == PUMP_DETECTOR:
         pump_detector(event)
     elif event.chat_id == -1001385300019:
