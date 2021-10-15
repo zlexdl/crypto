@@ -115,7 +115,7 @@ if __name__ == "__main__":
                     'To'] = "zlexdl<zlexdl@163.com>, jiangdi_li<jiangdi_li@126.com>, lzjjxljaljt<lzjjxljaljt@163.com>"
                 # message['To'] =  "zlexdl<zlexdl@163.com>"
 
-                subject = 'bsv whale:' + i.address
+                subject = i.address[0:4] + " " + str(diff) + " " + str(balance)
                 message['Subject'] = Header(subject, 'utf-8')
 
                 try:
