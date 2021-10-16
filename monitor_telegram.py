@@ -253,7 +253,7 @@ def pump_detector(event):
         ret2 = session.query(Monitor).filter(Monitor.asset_pair == assetPair).filter(
             Monitor.updated_at >= NOW - timedelta(days=30)).all()
 
-        mail_contents = mail_contents + "\n"
+        mail_contents = mail_contents.replace("\n", "\r\n") + "\r\n"
         for i in ret2:
             mail_contents = mail_contents + '{:.8f}'.format(i.price) + " " + str(i.updated_at) + "\r\n"
             print(i.id, i.asset_pair, '{:.8f}'.format(i.price), i.updated_at)
