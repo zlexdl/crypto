@@ -255,7 +255,7 @@ def pump_detector(event):
 
         mail_contents = mail_contents + "\n"
         for i in ret2:
-            mail_contents = mail_contents + '{:.8f}'.format(i.price) + " " + str(i.updated_at) + "\n"
+            mail_contents = mail_contents + '{:.8f}'.format(i.price) + " " + str(i.updated_at) + "\r\n"
             print(i.id, i.asset_pair, '{:.8f}'.format(i.price), i.updated_at)
 
         print("ret_count:" + str(ret))
