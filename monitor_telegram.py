@@ -172,8 +172,8 @@ def sendMail(mail_subject, mail_contents):
 
     if is_test == int(global_config.getRaw('mail', 'is_test')) or mail_subject == 'test':
 
-        receivers = ['frm5966@dingtalk.com']
-        message['To'] = "zlexdl<frm5966@dingtalk.com>"
+        receivers = ['frm5966@dingtalk.com', '6585852@qq.com']
+        message['To'] = "zlexdl<frm5966@dingtalk.com>, 6585852@qq.com"
     else:
         receivers = ['frm5966@dingtalk.com', 'txy-87evmhmuw@dingtalk.com', '327388224@qq.com', '6585852@qq.com',
                      'd875x9g@dingtalk.com', 'btcbch2017@dingtalk.com', 'dlwg10g@dingtalk.com', 'xiaotu996@dingtalk.com', 'zjjxjajt999@dingtalk.com']
