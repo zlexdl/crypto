@@ -175,9 +175,9 @@ def sendMail(mail_subject, mail_contents):
         receivers = ['frm5966@dingtalk.com']
         message['To'] = "zlexdl<frm5966@dingtalk.com>"
     else:
-        receivers = ['frm5966@dingtalk.com', 'txy-87evmhmuw@dingtalk.com', '327388224@qq.com',
+        receivers = ['frm5966@dingtalk.com', 'txy-87evmhmuw@dingtalk.com', '327388224@qq.com', '6585852@qq.com',
                      'd875x9g@dingtalk.com', 'btcbch2017@dingtalk.com', 'dlwg10g@dingtalk.com', 'xiaotu996@dingtalk.com', 'zjjxjajt999@dingtalk.com']
-        message['To'] = "frm5966@dingtalk.com,txy-87evmhmuw@dingtalk.com,327388224@qq.com, " \
+        message['To'] = "frm5966@dingtalk.com,txy-87evmhmuw@dingtalk.com,327388224@qq.com,6585852@qq.com, " \
                         "d875x9g@dingtalk.com," \
                         "btcbch2017@dingtalk.com, dlwg10g@dingtalk.com, xiaotu996@dingtalk.com, zjjxjajt999@dingtalk.com "
     print("邮件发送start")
@@ -332,7 +332,7 @@ async def my_event_handler(event):
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_SUSHI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_UNI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_PANCAKE))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_TEST))
+# client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_TEST))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=PUMP_DETECTOR))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001385300019)]))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001329310076)]))
