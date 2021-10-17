@@ -176,10 +176,14 @@ def sendMail(mail_subject, mail_contents):
         message['To'] = "zlexdl<frm5966@dingtalk.com>, 6585852@qq.com"
     else:
         receivers = ['frm5966@dingtalk.com', 'txy-87evmhmuw@dingtalk.com', '327388224@qq.com', '6585852@qq.com',
-                     'd875x9g@dingtalk.com', 'btcbch2017@dingtalk.com', 'dlwg10g@dingtalk.com', 'xiaotu996@dingtalk.com', 'zjjxjajt999@dingtalk.com']
-        message['To'] = "frm5966@dingtalk.com,txy-87evmhmuw@dingtalk.com,327388224@qq.com,6585852@qq.com, " \
+                     '626188@qq.com',
+                     'd875x9g@dingtalk.com', 'btcbch2017@dingtalk.com', 'dlwg10g@dingtalk.com',
+                     'xiaotu996@dingtalk.com', 'zjjxjajt999@dingtalk.com']
+        message['To'] = "frm5966@dingtalk.com,txy-87evmhmuw@dingtalk.com,327388224@qq.com," \
+                        "6585852@qq.com,626188@qq.com, " \
                         "d875x9g@dingtalk.com," \
-                        "btcbch2017@dingtalk.com, dlwg10g@dingtalk.com, xiaotu996@dingtalk.com, zjjxjajt999@dingtalk.com "
+                        "btcbch2017@dingtalk.com, dlwg10g@dingtalk.com, " \
+                        "xiaotu996@dingtalk.com, zjjxjajt999@dingtalk.com "
     print("邮件发送start")
 
     try:
