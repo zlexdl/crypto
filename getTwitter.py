@@ -27,6 +27,7 @@ auth.set_access_token(global_config.getRaw('twitter', 'key'),
 
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
+
 # user = api.get_user('CryptoNewton')
 # public_tweets = api.user_timeline(user.id)
 
@@ -37,11 +38,11 @@ def send_mail(tweet):
     mail_pass = global_config.getRaw('mail', 'mail_pass')
 
     sender = 'bsv_whale_alert@126.com'
-    receivers = ['frm5966@dingtalk.com', 'd875x9g@dingtalk.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+    receivers = ['6585852@qq.com', '393899161@qq.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
     message = MIMEMultipart()
 
-    message['From'] = "bsv_whale_alert<bsv_whale_alert@126.com>"
-    message['To'] = "zlexdl<frm5966@dingtalk.com>, d875x9g@dingtalk.com"
+    message['From'] = "TW<bsv_whale_alert@126.com>"
+    message['To'] = "6585852@qq.com, 393899161@qq.com"
     subject = tweet.user.screen_name
     message['Subject'] = Header(subject, 'utf-8')
     text = MIMEText(tweet.text)
@@ -79,8 +80,18 @@ while True:
         # public_tweets = api.home_timeline(count=50)
         # public_tweets = api.list_timeline(list_id=1413685290284163076,count=50)
 
-        user = api.get_user('CryptoFaibik')
-        public_tweets = api.user_timeline(user.id)
+        zlexdl = api.user_timeline(api.get_user('zlexdl').id, count=3)
+        CryptoFaibik = api.user_timeline(api.get_user('CryptoFaibik').id, count=3)
+        RadioCacaNFT = api.user_timeline(api.get_user('RadioCacaNFT').id, count=3)
+        bsc_daily = api.user_timeline(api.get_user('bsc_daily').id, count=3)
+        bakery_swap = api.user_timeline(api.get_user('bakery_swap').id, count=3)
+        VenusProtocol = api.user_timeline(api.get_user('VenusProtocol').id, count=3)
+        cz_binance = api.user_timeline(api.get_user('cz_binance').id, count=3)
+        Binance = api.user_timeline(api.get_user('Binance').id, count=3)
+        TheBinanceNFT = api.user_timeline(api.get_user('TheBinanceNFT').id, count=3)
+        print("---------------------public_tweets")
+        public_tweets = zlexdl + CryptoFaibik + RadioCacaNFT + bsc_daily + bakery_swap + VenusProtocol + cz_binance + Binance + TheBinanceNFT
+
     except Exception as e:
         print("sleep 60s")
         time.sleep(60)
@@ -107,7 +118,6 @@ while True:
         print("---------------------")
         # send_mail(tweet)
         if tweet.created_at >= utcTime_minutes:
-
             send_mail(tweet)
 
     print("time.sleep(300) start time=" + str(datetime.utcnow()))
