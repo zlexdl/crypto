@@ -113,3 +113,12 @@ def send_wechat(message):
         'User-Agent':global_config.getRaw('config', 'DEFAULT_USER_AGENT')
     }
     requests.get(url, params=payload, headers=headers)
+
+def send_pushplus(title, content, topic):
+    """推送信息到微信"""
+    url = 'https://www.pushplus.plus/send?token={}&title={}&content={}&template=html&topic={}'.format(global_config.getRaw('pushplus', 'token'), title, content, topic)
+    payload = {}
+    headers = {}
+    requests.get(url, params=payload, headers=headers)
+
+# send_pushplus('test3', '如果想开启下单成功后消息推送，则将 enable 设置为 true，默认为 false 不开启推送', '001')
