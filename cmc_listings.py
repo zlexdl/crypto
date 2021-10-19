@@ -143,7 +143,7 @@ while True:
                 content = '<table><thead><tr><th></th><th></th></tr></thead><tbody><tr><td>name：</td><td>{}</td></tr><tr><td>symbol：</td><td>{}</td></tr><tr><td>最大供应量：</td><td>{}</td></tr><tr><td>总供应量：</td><td>{}</td></tr><tr><td>流通供应量：</td><td>{}</td></tr><tr><td>价格(U)：</td><td>{}</td></tr><tr><td>平台：</td><td>{}</td></tr><tr><td>加入时间：</td><td>{}</td></tr><tr><td>地址：</td><td></td></tr><tr><td colspan="2">{}</td></tr></tbody></table>'.format(
                     name, symbol, max_supply, total_supply, circulating_supply, price, platform_name, date_added, token_address)
                 # sendMail(subject, content)
-                send_pushplus(subject, content, '001')
+                send_pushplus(subject, content, '002')
 
     except Exception as e:
         session.rollback()
