@@ -10,6 +10,7 @@ from email.header import Header
 import wget
 import os
 from config import global_config
+from util import send_pushplus
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
@@ -89,8 +90,9 @@ while True:
         cz_binance = api.user_timeline(api.get_user('cz_binance').id, count=3)
         Binance = api.user_timeline(api.get_user('Binance').id, count=3)
         TheBinanceNFT = api.user_timeline(api.get_user('TheBinanceNFT').id, count=3)
+        ElemonGame = api.user_timeline(api.get_user('ElemonGame').id, count=3)
         print("---------------------public_tweets")
-        public_tweets = zlexdl + CryptoFaibik + RadioCacaNFT + bsc_daily + bakery_swap + VenusProtocol + cz_binance + Binance + TheBinanceNFT
+        public_tweets = zlexdl + CryptoFaibik + RadioCacaNFT + bsc_daily + bakery_swap + VenusProtocol + cz_binance + Binance + TheBinanceNFT + ElemonGame
 
     except Exception as e:
         print("sleep 60s")
@@ -118,7 +120,8 @@ while True:
         print("---------------------")
         # send_mail(tweet)
         if tweet.created_at >= utcTime_minutes:
-            send_mail(tweet)
+            # send_mail(tweet)
+            send_pushplus(tweet.user.screen_name, tweet.text, 'TW001')
 
     print("time.sleep(300) start time=" + str(datetime.utcnow()))
     time.sleep(300)
