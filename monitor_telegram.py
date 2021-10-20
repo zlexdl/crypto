@@ -14,6 +14,8 @@ import time
 from config import global_config
 from monitor_logger import logging
 from telethon.tl.types import PeerChannel
+from util import send_pushplus
+
 
 is_test = 0
 WHALE_SUSHI = 'sushiwhale'
@@ -264,7 +266,8 @@ def pump_detector(event):
 
         print("ret_count:" + str(ret))
         if ret > 3:
-            sendMail(mail_subject, mail_contents)
+            # sendMail(mail_subject, mail_contents)
+            send_pushplus(mail_subject, mail_contents, 'pump001')
             return
 
         if assetBase == 'USDT':
@@ -285,8 +288,9 @@ def pump_detector(event):
                 print('Return:ETH:' + volume)
                 return
             pass
-
-        sendMail(mail_subject, mail_contents)
+        print('send_pushplus')
+        # sendMail(mail_subject, mail_contents)
+        send_pushplus(mail_subject, mail_contents, 'pump001')
     except Exception as e:
         session.rollback()
         print("Error:" + str(e))
@@ -312,7 +316,8 @@ async def my_event_handler(event):
 
     if event.chat_id == -1001329310076:
         logging.info('test:' + event.raw_text)
-        sendMail('test', event.raw_text)
+        # sendMail('test', event.raw_text)
+        send_pushplus('test', event.raw_text, 'pump001')
     elif event.chat.username == WHALE_TEST:
         raw_text = event.raw_text.split(' ')
         read_message(raw_text, WHALE_PANCAKE)
