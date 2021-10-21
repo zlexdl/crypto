@@ -120,5 +120,5 @@ def send_pushplus(title, content, topic):
     payload = {}
     headers = {}
     requests.get(url, params=payload, headers=headers)
-
+    print('推送成功:' + url)
 # send_pushplus('test3', '如果想开启下单成功后消息推送，则将 enable 设置为 true，默认为 false 不开启推送', '001')

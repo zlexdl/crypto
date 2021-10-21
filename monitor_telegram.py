@@ -329,6 +329,21 @@ async def my_event_handler(event):
     elif event.chat_id == -1001385300019:
         logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
         sendMail('[VIP]COVE PREMIUM', event.raw_text)
+
+        try:
+            info = event.raw_text.split('\n\n')
+            info1 = info[0]
+            info2 = info[1]
+            if info2.lower().find('buy between') >= 0:
+
+                symbol = info1.split(' ')[1].replace('#', '')
+                between = info2.lower().replace('buy between', '')
+                title = '{}'.format(symbol)
+                content = '{}在区间{}'.format(symbol, between)
+                send_pushplus(title, content, 'VIP001')
+        except Exception as e:
+            print("Error:" + str(e))
+            logging.error("Error:" + str(e))
     else:
         print("========================>Other")
 
