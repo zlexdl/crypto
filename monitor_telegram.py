@@ -16,7 +16,6 @@ from monitor_logger import logging
 from telethon.tl.types import PeerChannel
 from util import send_pushplus
 
-
 is_test = 0
 WHALE_SUSHI = 'sushiwhale'
 WHALE_UNI = 'uniwhales'
@@ -161,8 +160,6 @@ def sendMail(mail_subject, mail_contents):
     mail_pass = global_config.getRaw('mail', 'mail_pass')
     sender = global_config.getRaw('mail', 'sender')
 
-
-
     # dlwg10g@dingtalk.com 梨
     # btcbch2017@dingtalk.com bsv666
     # d875x9g@dingtalk.com 于
@@ -179,13 +176,12 @@ def sendMail(mail_subject, mail_contents):
     else:
         receivers = ['frm5966@dingtalk.com', 'txy-87evmhmuw@dingtalk.com', '327388224@qq.com', '6585852@qq.com',
                      '626188@qq.com',
-                     'd875x9g@dingtalk.com', 'btcbch2017@dingtalk.com', 'dlwg10g@dingtalk.com',
-                     'xiaotu996@dingtalk.com', 'zjjxjajt999@dingtalk.com']
+                     'd875x9g@dingtalk.com', 'btcbch2017@dingtalk.com', 'dlwg10g@dingtalk.com']
         message['To'] = "frm5966@dingtalk.com,txy-87evmhmuw@dingtalk.com,327388224@qq.com," \
                         "6585852@qq.com,626188@qq.com, " \
                         "d875x9g@dingtalk.com," \
-                        "btcbch2017@dingtalk.com, dlwg10g@dingtalk.com, " \
-                        "xiaotu996@dingtalk.com, zjjxjajt999@dingtalk.com "
+                        "btcbch2017@dingtalk.com, dlwg10g@dingtalk.com, "
+
     print("邮件发送start")
 
     try:
@@ -328,14 +324,14 @@ async def my_event_handler(event):
         pump_detector(event)
     elif event.chat_id == -1001385300019:
         logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
-        sendMail('[VIP]COVE PREMIUM', event.raw_text)
 
+        symbol = ''
+        between = ''
         try:
             info = event.raw_text.split('\n\n')
             info1 = info[0]
             info2 = info[1]
             if info2.lower().find('buy between') >= 0:
-
                 symbol = info1.split(' ')[1].replace('#', '')
                 between = info2.lower().replace('buy between', '')
                 title = '{}'.format(symbol)
@@ -344,6 +340,7 @@ async def my_event_handler(event):
         except Exception as e:
             print("Error:" + str(e))
             logging.error("Error:" + str(e))
+        sendMail('[VIP]{}:{}'.format(symbol, between), event.raw_text)
     else:
         print("========================>Other")
 
