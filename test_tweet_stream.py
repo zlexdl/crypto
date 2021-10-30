@@ -21,6 +21,10 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
+LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
+logging.basicConfig(filename='logs/test_tweet_stream.log', level=logging.DEBUG, format=LOG_FORMAT, datefmt=DATE_FORMAT,
+                    encoding='utf-8')
 
 
 auth = tweepy.OAuthHandler(global_config.getRaw('twitter', 'consumer_key'),
@@ -75,24 +79,24 @@ def send_mail(tweet, to):
         smtpObj.login(mail_user, mail_pass)
         smtpObj.sendmail(sender, receivers, message.as_string())
 
-        print("邮件发送成功")
+        logging.info("邮件发送成功")
     except smtplib.SMTPException:
-        print("Error: 无法发送邮件")
+        logging.info("Error: 无法发送邮件")
 
 
 
 class MyStreamListener(tweepy.StreamListener):
     #重写 on_status
     def on_status(self, status):
-        print(status.text)
-        print(status.author.id)
+        logging.info(status.text)
+        logging.info(status.author.id)
         # send_pushplus(str(status.author.id), status.text, 'TW001')
 
         datas = session.query(TwitterNotification).filter(TwitterNotification.twitter_name == api.get_user(status.author.id).screen_name).all()
         for data in datas:
             obj = getDictFromObj_nr(data)
             email_address = obj['email_address']
-            print(email_address)
+            logging.info(email_address)
             send_mail(status, email_address)
 
         # if status.author.id == api.get_user('zlexdl').id:
@@ -115,6 +119,7 @@ def retry():
 
         # 实例化
         myStreamListener = MyStreamListener()
+        logging.info("start")
         print("start")
         # 身份验证，绑定监听流媒体
         myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
@@ -128,12 +133,12 @@ def retry():
         # myStream.filter(follow=[str(api.get_user('WhaleBotPumps').id)])
         # --- 支持异步，参数is_async，推荐使用异步形式
         # myStream.filter(track=['BTC'], is_async=True)
-        print("filter")
+        logging.info("filter")
         # 关闭流媒体的监听
         myStream.disconnect()
-        print("disconnect")
+        logging.info("disconnect")
     except Exception as e:
-        print("Error: " + str(e))
+        logging.info("Error: " + str(e))
         retry()
 
 def getDictFromObj_nr(obj):
@@ -154,14 +159,14 @@ def get_follow_list():
     for data in datas:
         obj = getDictFromObj_nr(data)
         twitter_name = obj['twitter_name']
-        print(obj['twitter_name'])
+        logging.info(obj['twitter_name'])
 
         twitter_id = str(api.get_user(twitter_name).id)
-        print(api.get_user(twitter_id).screen_name)
+        logging.info(api.get_user(twitter_id).screen_name)
         if twitter_id not in follow_list:
             follow_list.append(twitter_id)
 
-    print(follow_list)
+    logging.info(follow_list)
     return follow_list
 
 
