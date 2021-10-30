@@ -36,7 +36,9 @@ auth.set_access_token(global_config.getRaw('twitter', 'key'),
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 IMAGES_FOLDER = "./images/"
-
+logging.getLogger('tweepy.bind.bind_api').setLevel(logging.ERROR)
+logging.getLogger('tweepy').setLevel(logging.ERROR)
+logging.getLogger('tweepy.bind').setLevel(logging.ERROR)
 
 class TwitterNotification(Base):
     __tablename__ = "twitter_notification"  # 数据库中保存的表名字
