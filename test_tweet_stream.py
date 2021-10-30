@@ -92,12 +92,13 @@ def send_mail(tweet, to):
 class MyStreamListener(tweepy.StreamListener):
     #重写 on_status
     def on_status(self, status):
-        logging.info(status.text)
-        logging.info(status.author.id)
+
 
         screen_name = api.get_user(status.author.id).screen_name
         datas = session.query(TwitterNotification).filter(TwitterNotification.twitter_name == screen_name).all()
         for data in datas:
+            logging.info(status.text)
+            logging.info(status.author.id)
             obj = getDictFromObj_nr(data)
             email_address = obj['email_address']
             logging.info(email_address)
