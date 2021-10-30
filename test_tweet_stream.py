@@ -100,7 +100,7 @@ class MyStreamListener(tweepy.StreamListener):
             email_address = obj['email_address']
             logging.info(email_address)
             send_pushplus(str(status.author.id), status.text, 'TW001')
-            send_mail(status, email_address)
+            # send_mail(status, email_address)
 
         # if status.author.id == api.get_user('zlexdl').id:
         #     send_mail(status, email_address)
