@@ -7,23 +7,53 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 import wget
 import os
-from config import global_config
-auth = tweepy.OAuthHandler("O8yZNzfoelt7fagdXkacsOXp7", "S9CCYUZ7GVq2VaPUB5iW5QnRnLyDPtpiS0L4SawNuIpvegiBYJ")
-auth.set_access_token("112694900-gMcMQmgU1chzqhwuf58sRYqwEikZ76XCJBaQHrDV", "yTj1h4trMOf39NdXuQ4DwHoQo1cYmzrVJziN41hHWQXi3")
-IMAGES_FOLDER = "./images/"
-api = tweepy.API(auth)
+from util import send_pushplus
 
-def send_mail(tweet):
+from config import global_config
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, BigInteger, Integer, String, Text, DateTime, ForeignKey, Float
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+
+engine = create_engine(global_config.getRaw('db', 'vultr_db_url'))
+Base = declarative_base()
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
+
+auth = tweepy.OAuthHandler(global_config.getRaw('twitter', 'consumer_key'),
+                           global_config.getRaw('twitter', 'consumer_secret'))
+auth.set_access_token(global_config.getRaw('twitter', 'key'),
+                      global_config.getRaw('twitter', 'secret'))
+
+api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
+IMAGES_FOLDER = "./images/"
+
+
+class TwitterNotification(Base):
+    __tablename__ = "twitter_notification"  # 数据库中保存的表名字
+
+    id = Column(Integer, index=True, primary_key=True)
+    twitter_name = Column(String(50), nullable=True)
+    email_address = Column(String(50), nullable=True)
+    switch = Column(Integer, nullable=True)
+    updated_at = Column(DateTime, default=datetime.now)
+
+
+def send_mail(tweet, to):
     mail_host = global_config.getRaw('mail', 'mail_host')
     mail_user = global_config.getRaw('mail', 'mail_user')
     mail_pass = global_config.getRaw('mail', 'mail_pass')
 
     sender = 'bsv_whale_alert@126.com'
-    receivers = ['6585852@qq.com', '39644849@qq.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+    receivers = [to]  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
     message = MIMEMultipart()
 
-    message['From'] = "whale_alert<bsv_whale_alert@126.com>"
-    message['To'] = "6585852@qq.com, 39644849@qq.com"
+    message['From'] = "alert<bsv_whale_alert@126.com>"
+    message['To'] = to
     subject = tweet.user.screen_name
     message['Subject'] = Header(subject, 'utf-8')
     text = MIMEText(tweet.text)
@@ -50,12 +80,28 @@ def send_mail(tweet):
         print("Error: 无法发送邮件")
 
 
+
 class MyStreamListener(tweepy.StreamListener):
     #重写 on_status
     def on_status(self, status):
-        if status.author.id == api.get_user('CryptoFaibik').id:
-            send_mail(status)
-            print(status.text)
+        print(status.text)
+        print(status.author.id)
+        # send_pushplus(str(status.author.id), status.text, 'TW001')
+
+        datas = session.query(TwitterNotification).filter(TwitterNotification.twitter_name == api.get_user(status.author.id).screen_name).all()
+        for data in datas:
+            obj = getDictFromObj_nr(data)
+            email_address = obj['email_address']
+            print(email_address)
+            send_mail(status, email_address)
+
+        # if status.author.id == api.get_user('zlexdl').id:
+        #     send_mail(status, email_address)
+        #     print(status.text)
+
+        # if status.author.id == api.get_user('WhaleBotPumps').id:
+        #     send_mail(status)
+            # print(status.text)
         # status 是一个对象，里面包含了该条推文的所有字段，比如推文内容、点赞数、评论数、作者id、作者昵称、作者粉丝数等等
 
 
@@ -64,18 +110,60 @@ class MyStreamListener(tweepy.StreamListener):
         if status_code == 420:
             return False #returning False in on_error disconnects the stream
 
-# 实例化
-myStreamListener = MyStreamListener()
-# 身份验证，绑定监听流媒体
-myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
-# --- 监听关键词Python相关的推文
-# myStream.filter(track=['python'])
-# --- 关注某推特用户，只能通过ID
-myStream.filter(follow=[str(api.get_user('CryptoFaibik').id)])
-# myStream.filter(follow=[str(api.get_user('TheCryptoVyom').id)])
-# myStream.filter(follow=[str(api.get_user('WhaleBotPumps').id)])
-# --- 支持异步，参数is_async，推荐使用异步形式
-# myStream.filter(track=['BTC'], is_async=True)
+def retry():
+    try:
 
-# 关闭流媒体的监听
-myStream.disconnect()
+        # 实例化
+        myStreamListener = MyStreamListener()
+        print("start")
+        # 身份验证，绑定监听流媒体
+        myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
+        # --- 监听关键词Python相关的推文
+        # myStream.filter(track=['python'])
+        # --- 关注某推特用户，只能通过ID
+        # follow_list = [str(api.get_user('zlexdl').id), str(api.get_user('WhaleBotPumps').id), str(api.get_user('TheCryptoVyom').id), str(api.get_user('TraderWisdom').id)]
+        follow_list = get_follow_list()
+        myStream.filter(follow=follow_list)
+        # myStream.filter(follow=[str(api.get_user('TheCryptoVyom').id)])
+        # myStream.filter(follow=[str(api.get_user('WhaleBotPumps').id)])
+        # --- 支持异步，参数is_async，推荐使用异步形式
+        # myStream.filter(track=['BTC'], is_async=True)
+        print("filter")
+        # 关闭流媒体的监听
+        myStream.disconnect()
+        print("disconnect")
+    except Exception as e:
+        print("Error: " + str(e))
+        retry()
+
+def getDictFromObj_nr(obj):
+    return_dict = {}
+    if isinstance(obj, TwitterNotification):
+        for key in obj.__dict__:
+            if key.startswith('_'): continue
+            return_dict[key] = getattr(obj, key)
+    return return_dict
+
+
+
+
+# print(str(api.get_user("zlexdl").id))
+def get_follow_list():
+    datas = session.query(TwitterNotification).all()
+    follow_list = []
+    for data in datas:
+        obj = getDictFromObj_nr(data)
+        twitter_name = obj['twitter_name']
+        print(obj['twitter_name'])
+
+        twitter_id = str(api.get_user(twitter_name).id)
+        print(api.get_user(twitter_id).screen_name)
+        if twitter_id not in follow_list:
+            follow_list.append(twitter_id)
+
+    print(follow_list)
+    return follow_list
+
+
+# get_follow_list()
+retry()
