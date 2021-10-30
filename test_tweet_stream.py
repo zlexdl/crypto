@@ -93,13 +93,13 @@ class MyStreamListener(tweepy.StreamListener):
         logging.info(status.text)
         logging.info(status.author.id)
 
-
-        datas = session.query(TwitterNotification).filter(TwitterNotification.twitter_name == api.get_user(status.author.id).screen_name).all()
+        screen_name = api.get_user(status.author.id).screen_name
+        datas = session.query(TwitterNotification).filter(TwitterNotification.twitter_name == screen_name).all()
         for data in datas:
             obj = getDictFromObj_nr(data)
             email_address = obj['email_address']
             logging.info(email_address)
-            send_pushplus(str(status.author.id), status.text, 'TW001')
+            send_pushplus(screen_name, status.text, 'TW001')
             # send_mail(status, email_address)
 
         # if status.author.id == api.get_user('zlexdl').id:
