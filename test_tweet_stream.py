@@ -16,6 +16,7 @@ from sqlalchemy import Column, BigInteger, Integer, String, Text, DateTime, Fore
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
+# engine = create_engine(global_config.getRaw('db', 'hwdb_db_url'))
 engine = create_engine(global_config.getRaw('db', 'vultr_db_url'))
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
@@ -74,6 +75,7 @@ def send_mail(tweet, to):
         image = MIMEImage(img_data, name=filename)
         message.attach(image)
     try:
+        logging.info("邮件发送开始")
         smtpObj = smtplib.SMTP()
         smtpObj.connect(mail_host, 25)  # 25 为 SMTP 端口号
         smtpObj.login(mail_user, mail_pass)
@@ -90,13 +92,14 @@ class MyStreamListener(tweepy.StreamListener):
     def on_status(self, status):
         logging.info(status.text)
         logging.info(status.author.id)
-        # send_pushplus(str(status.author.id), status.text, 'TW001')
+
 
         datas = session.query(TwitterNotification).filter(TwitterNotification.twitter_name == api.get_user(status.author.id).screen_name).all()
         for data in datas:
             obj = getDictFromObj_nr(data)
             email_address = obj['email_address']
             logging.info(email_address)
+            send_pushplus(str(status.author.id), status.text, 'TW001')
             send_mail(status, email_address)
 
         # if status.author.id == api.get_user('zlexdl').id:
@@ -120,7 +123,7 @@ def retry():
         # 实例化
         myStreamListener = MyStreamListener()
         logging.info("start")
-        print("start")
+
         # 身份验证，绑定监听流媒体
         myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
         # --- 监听关键词Python相关的推文
@@ -129,6 +132,7 @@ def retry():
         # follow_list = [str(api.get_user('zlexdl').id), str(api.get_user('WhaleBotPumps').id), str(api.get_user('TheCryptoVyom').id), str(api.get_user('TraderWisdom').id)]
         follow_list = get_follow_list()
         myStream.filter(follow=follow_list)
+        print("start")
         # myStream.filter(follow=[str(api.get_user('TheCryptoVyom').id)])
         # myStream.filter(follow=[str(api.get_user('WhaleBotPumps').id)])
         # --- 支持异步，参数is_async，推荐使用异步形式
