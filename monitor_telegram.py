@@ -200,14 +200,11 @@ def jijifabu_notice00(event):
     try:
         # 解析数据
         list_of_lines = event.raw_text.split('\n')
-
-        list_of_strings = []
-
-        final_list = []
         ex = list_of_lines[0]
-        datetime = list_of_lines[1]
-
-        send_pushplus(ex, event.raw_text, 'announcements')
+        ex_list = ['FTX', 'upbit.com', 'coinbase', '币安', 'OKEX.COM']
+        if ex in ex_list:
+            send_pushplus(ex, event.raw_text, 'announcements')
+            logging.info("已发送{}的公告".format(ex))
     except Exception as e:
         print("Error:" + str(e))
         logging.error("Error:" + str(e))
@@ -330,7 +327,7 @@ async def my_event_handler(event):
     print(event.chat.username)
 
     if event.chat_id == -1001329310076:
-        pump_detector(event)
+        # jijifabu_notice00(event)
         logging.info('test:' + event.raw_text)
         # sendMail('test', event.raw_text)
         send_pushplus('test', event.raw_text, 'pump001')
