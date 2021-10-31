@@ -23,6 +23,7 @@ WHALE_PANCAKE = 'pancakewhales'
 WHALE_TEST = 'test_zlexdl'
 PUMP_DETECTOR = 'cointrendz_pumpdetector'
 CRYPTO_COVE_PREMIUM = 'CryptoCovePremium'
+JIJIFABU_NOTICE00 = 'jijifabu_notice00'
 
 engine = create_engine(global_config.getRaw('db', 'hwdb_db_url'))
 Base = declarative_base()
@@ -195,6 +196,22 @@ def sendMail(mail_subject, mail_contents):
     except smtplib.SMTPException:
         print("Error: 无法发送邮件")
 
+def jijifabu_notice00(event):
+    try:
+        # 解析数据
+        list_of_lines = event.raw_text.split('\n')
+
+        list_of_strings = []
+
+        final_list = []
+        ex = list_of_lines[0]
+        datetime = list_of_lines[1]
+
+        send_pushplus(ex, event.raw_text, 'announcements')
+    except Exception as e:
+        print("Error:" + str(e))
+        logging.error("Error:" + str(e))
+
 
 def pump_detector(event):
     try:
@@ -246,7 +263,9 @@ def pump_detector(event):
 
         res = es.index(index="public_tetlthon3", body=doc)
         logging.info("es result=" + res['result'])
-
+        # 币安以外不发送
+        if ex != "Binance":
+            return
         print(time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()))
         mail_contents = event.raw_text.replace("Set custom Alerts: CoinTrendz.com", "")
         mail_subject = ex + " " + asset + " " + _volume + " " + assetBase
@@ -311,6 +330,7 @@ async def my_event_handler(event):
     print(event.chat.username)
 
     if event.chat_id == -1001329310076:
+        pump_detector(event)
         logging.info('test:' + event.raw_text)
         # sendMail('test', event.raw_text)
         send_pushplus('test', event.raw_text, 'pump001')
@@ -322,6 +342,8 @@ async def my_event_handler(event):
         read_message(raw_text, event.chat.username)
     elif event.chat.username == PUMP_DETECTOR:
         pump_detector(event)
+    elif event.chat.username == JIJIFABU_NOTICE00:
+        jijifabu_notice00(event)
     elif event.chat_id == -1001385300019:
         logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
 
@@ -350,10 +372,11 @@ async def my_event_handler(event):
     # sendMail(mail_subject, mail_contents)
 
 
+client.add_event_handler(my_event_handler, events.NewMessage(chats=JIJIFABU_NOTICE00))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_SUSHI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_UNI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_PANCAKE))
-# client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_TEST))
+
 client.add_event_handler(my_event_handler, events.NewMessage(chats=PUMP_DETECTOR))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001385300019)]))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001329310076)]))
