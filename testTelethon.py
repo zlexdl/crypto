@@ -20,9 +20,9 @@ NOW = datetime.now()
 logging.basicConfig(filename='logs/telethon.log', level=logging.INFO, format=LOG_FORMAT, datefmt=DATE_FORMAT,
                     encoding='utf-8')
 
-api_id = int(global_config.getRaw('telegram_182', 'api_id'))
-api_hash = global_config.getRaw('telegram_182', 'api_hash')
-phone_number = global_config.getRaw('telegram_182', 'phone_number')
+api_id = int(global_config.getRaw('telegram_155', 'api_id'))
+api_hash = global_config.getRaw('telegram_155', 'api_hash')
+phone_number = global_config.getRaw('telegram_155', 'phone_number')
 
 engine = create_engine(global_config.getRaw('db', 'hwdb_db_url'))
 Base = declarative_base()
