@@ -92,8 +92,9 @@ while True:
         TheBinanceNFT = api.user_timeline(api.get_user('TheBinanceNFT').id, count=3)
         ElemonGame = api.user_timeline(api.get_user('ElemonGame').id, count=3)
         top7ico = api.user_timeline(api.get_user('top7ico').id, count=3)
+        yooshi_official = api.user_timeline(api.get_user('yooshi_official').id, count=3)
         print("---------------------public_tweets")
-        public_tweets = zlexdl + CryptoFaibik + RadioCacaNFT + bsc_daily + bakery_swap + VenusProtocol + cz_binance + Binance + TheBinanceNFT + ElemonGame + top7ico
+        public_tweets = zlexdl + CryptoFaibik + RadioCacaNFT + bsc_daily + bakery_swap + VenusProtocol + cz_binance + Binance + TheBinanceNFT + ElemonGame + top7ico + yooshi_official
 
     except Exception as e:
         print("sleep 60s")
