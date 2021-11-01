@@ -203,6 +203,7 @@ def jijifabu_notice00(event):
         ex = list_of_lines[0]
         ex_list = ['FTX', 'upbit.com', 'coinbase', '币安', 'OKEX.COM']
         if ex in ex_list:
+            sendMail(ex, event.raw_text)
             send_pushplus(ex, event.raw_text, 'announcements')
             logging.info("已发送{}的公告".format(ex))
     except Exception as e:
@@ -340,6 +341,7 @@ async def my_event_handler(event):
     elif event.chat.username == PUMP_DETECTOR:
         pump_detector(event)
     elif event.chat.username == JIJIFABU_NOTICE00:
+        logging.info("JIJIFABU_NOTICE00")
         jijifabu_notice00(event)
     elif event.chat_id == -1001385300019:
         logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
@@ -369,13 +371,13 @@ async def my_event_handler(event):
     # sendMail(mail_subject, mail_contents)
 
 
-client.add_event_handler(my_event_handler, events.NewMessage(chats=JIJIFABU_NOTICE00))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_SUSHI))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_UNI))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_PANCAKE))
-
-client.add_event_handler(my_event_handler, events.NewMessage(chats=PUMP_DETECTOR))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001385300019)]))
+# client.add_event_handler(my_event_handler, events.NewMessage(chats=JIJIFABU_NOTICE00))
+# client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_SUSHI))
+# client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_UNI))
+# client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_PANCAKE))
+#
+# client.add_event_handler(my_event_handler, events.NewMessage(chats=PUMP_DETECTOR))
+# client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001385300019)]))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001329310076)]))
 
 client.start()
