@@ -1,3 +1,10 @@
+
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+
+
+import os
+
 from telethon import TelegramClient, events, sync
 import re
 import smtplib
@@ -24,6 +31,9 @@ WHALE_TEST = 'test_zlexdl'
 PUMP_DETECTOR = 'cointrendz_pumpdetector'
 CRYPTO_COVE_PREMIUM = 'CryptoCovePremium'
 JIJIFABU_NOTICE00 = 'jijifabu_notice00'
+NOOBTRADINGCLUB = 'noobtradingclub'
+
+IMAGES_FOLDER = "./images/"
 
 engine = create_engine(global_config.getRaw('db', 'hwdb_db_url'))
 Base = declarative_base()
@@ -154,6 +164,41 @@ def read_message(telegram_message, flag):
     session.close()
 
 
+def send_mail(event, photo):
+    mail_host = global_config.getRaw('mail', 'mail_host')
+    mail_user = global_config.getRaw('mail', 'mail_user')
+    mail_pass = global_config.getRaw('mail', 'mail_pass')
+
+    sender = 'bsv_whale_alert@126.com'
+    receivers = ['6585852@qq.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
+    message = MIMEMultipart()
+
+    message['From'] = "TW<bsv_whale_alert@126.com>"
+    message['To'] = "6585852@qq.com"
+    subject = 'NOOBTRADINGCLUB'
+    message['Subject'] = Header(subject, 'utf-8')
+    text = MIMEText(event.raw_text)
+    message.attach(text)
+    if os.path.isfile(photo):
+        image_url = photo
+        logging.info("---------------------" + image_url)
+        (path, filename) = os.path.split(image_url)
+        with open(IMAGES_FOLDER + filename, 'rb') as f:
+            img_data = f.read()
+
+        image = MIMEImage(img_data, name=filename)
+        message.attach(image)
+    try:
+        smtpObj = smtplib.SMTP()
+        smtpObj.connect(mail_host, 25)  # 25 为 SMTP 端口号
+        smtpObj.login(mail_user, mail_pass)
+        smtpObj.sendmail(sender, receivers, message.as_string())
+
+        print("send_mail邮件发送成功")
+    except smtplib.SMTPException as e:
+        logging.error("Error: " + str(e))
+        print("Error: 无法发送邮件")
+
 def sendMail(mail_subject, mail_contents):
     # 发邮件 第三方 SMTP 服务
     mail_host = global_config.getRaw('mail', 'mail_host')
@@ -195,6 +240,7 @@ def sendMail(mail_subject, mail_contents):
         print("Error: " + str(e))
     except smtplib.SMTPException:
         print("Error: 无法发送邮件")
+
 
 def jijifabu_notice00(event):
     try:
@@ -323,12 +369,11 @@ print(client.get_me())
 
 async def my_event_handler(event):
     logging.info("Monitor whales start")
-    logging.info(event.chat_id)
-    print(event.raw_text)
-    print(event.chat.username)
+    # logging.info(event.chat_id)
+    # print(event.raw_text)
+    # print(event.chat.username)
 
     if event.chat_id == -1001329310076:
-        # jijifabu_notice00(event)
         logging.info('test:' + event.raw_text)
         # sendMail('test', event.raw_text)
         send_pushplus('test', event.raw_text, 'pump001')
@@ -343,6 +388,11 @@ async def my_event_handler(event):
     elif event.chat.username == JIJIFABU_NOTICE00:
         logging.info("JIJIFABU_NOTICE00")
         jijifabu_notice00(event)
+    elif event.chat.username == NOOBTRADINGCLUB:
+        logging.info("NOOBTRADINGCLUB")
+        filename = "images/{}.jpg".format(datetime.now().strftime("%Y%m%d-%H%M%S.%f"))
+        await client.download_media(event.media, filename)
+        send_mail(event, filename)
     elif event.chat_id == -1001385300019:
         logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
 
@@ -372,6 +422,7 @@ async def my_event_handler(event):
 
 
 client.add_event_handler(my_event_handler, events.NewMessage(chats=JIJIFABU_NOTICE00))
+client.add_event_handler(my_event_handler, events.NewMessage(chats=NOOBTRADINGCLUB))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_SUSHI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_UNI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_PANCAKE))
