@@ -245,7 +245,7 @@ def sendMail(mail_subject, mail_contents):
 def jijifabu_notice00(event):
     try:
         # 解析数据
-        list_of_lines = event.raw_text.split('\n')
+        list_of_lines = str(event.raw_text).split('\n')
         ex = list_of_lines[0]
         ex_list = ['FTX', 'upbit.com', 'coinbase', '币安', 'OKEX.COM']
         if ex in ex_list:
@@ -374,6 +374,7 @@ async def my_event_handler(event):
     # print(event.chat.username)
 
     if event.chat_id == -1001329310076:
+        # await premium(event)
         logging.info('test:' + event.raw_text)
         # sendMail('test', event.raw_text)
         send_pushplus('test', event.raw_text, 'pump001')
@@ -396,22 +397,7 @@ async def my_event_handler(event):
     elif event.chat_id == -1001385300019:
         logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
 
-        symbol = ''
-        between = ''
-        try:
-            info = event.raw_text.split('\n\n')
-            info1 = info[0]
-            info2 = info[1]
-            if info2.lower().find('buy between') >= 0:
-                symbol = info1.split(' ')[1].replace('#', '')
-                between = info2.lower().replace('buy between', '')
-                title = '{}'.format(symbol)
-                content = '{}在区间{}'.format(symbol, between)
-                send_pushplus(title, content, 'VIP001')
-        except Exception as e:
-            print("Error:" + str(e))
-            logging.error("Error:" + str(e))
-        sendMail('[VIP]{}:{}'.format(symbol, between), event.raw_text)
+        await premium(event)
     else:
         print("========================>Other")
 
@@ -419,6 +405,57 @@ async def my_event_handler(event):
     # mail_contents = MIMEText(event.raw_text, 'plain', 'utf-8').as_string()
     #
     # sendMail(mail_subject, mail_contents)
+
+
+async def premium(event):
+    symbol = ''
+    between = ''
+    target = ''
+    try:
+        # 达成目标通知
+        info = event.raw_text.split('\n')
+        if len(info) == 4:
+            ex = info[0]
+            if ex == "Binance":
+                symbol = ex.split(' ')[0].replace('#', '')
+                if "Take-Profit target" in info[1]:
+                    target = info[1].replace(' Take-Profit target ', '已达到目标')
+                profit = info[2].replace('Profit', '涨幅')
+                period = info[3].replace('Period', '耗时')
+            if target != '':
+                title = target
+                content = symbol + '\n' + target + '\n' + profit + '\n' + period
+                logging.info(content)
+                send_pushplus(title, content, 'VIP001')
+                return
+        else:
+            logging.info("premium1:{}".format(event.raw_text))
+
+        infos = event.raw_text.split('\n\n')
+        if len(infos) >= 4:
+            info1 = infos[0]
+            info2 = infos[1]
+
+            targets = infos[2].replace(' ', '').replace('Targets', '').split('-')
+            stop_loss = infos[3].replace(' ', '').replace('StopLoss', '')
+            if info2.lower().find('buy between') >= 0:
+                symbol = info1.split(' ')[1].replace('#', '')
+                between = info2.lower().replace('buy between', '')
+                title = '{}'.format(symbol)
+                content = '{}在区间{}.\n\n'.format(symbol, between)
+                index = 0
+                for target in targets:
+                    index = index + 1
+                    content = content + "目标{}：{}\n".format(str(index), str(target))
+                content = content + "\n止损：{}".format(str(stop_loss))
+                logging.info(content)
+                send_pushplus(title, content, 'VIP001')
+        else:
+            logging.info("premium2:{}".format(event.raw_text))
+    except Exception as e:
+        print("Error:" + str(e))
+        logging.error("Error:" + str(e))
+    sendMail('[VIP]{}'.format(symbol), event.raw_text)
 
 
 client.add_event_handler(my_event_handler, events.NewMessage(chats=JIJIFABU_NOTICE00))
