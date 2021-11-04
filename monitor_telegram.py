@@ -419,12 +419,12 @@ async def premium(event):
             if ex == "Binance":
                 symbol = ex.split(' ')[0].replace('#', '')
                 if "Take-Profit target" in info[1]:
-                    target = info[1].replace(' Take-Profit target ', '已达到目标')
+                    target = info[1].replace(' Take-Profit target ', '已达到目标')[:-1]
                 profit = info[2].replace('Profit', '涨幅')
                 period = info[3].replace('Period', '耗时')
             if target != '':
                 title = target.replace('/', '').replace('#', '')
-                content = symbol + '\n' + target + '\n' + profit + '\n' + period
+                content = target + '\n' + profit[:-1] + '\n' + period[:-1]
                 content = content.replace('/', '').replace('#', '')
                 logging.info(content)
                 res = send_pushplus(title, content, 'VIP001')
