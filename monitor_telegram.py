@@ -377,7 +377,7 @@ async def my_event_handler(event):
         # await premium(event)
         logging.info('test:' + event.raw_text)
         # sendMail('test', event.raw_text)
-        send_pushplus('test', event.raw_text, 'pump001')
+        # send_pushplus('test', event.raw_text, 'pump001')
     elif event.chat.username == WHALE_TEST:
         raw_text = event.raw_text.split(' ')
         read_message(raw_text, WHALE_PANCAKE)
@@ -423,10 +423,12 @@ async def premium(event):
                 profit = info[2].replace('Profit', '涨幅')
                 period = info[3].replace('Period', '耗时')
             if target != '':
-                title = target
+                title = target.replace('/', '').replace('#', '')
                 content = symbol + '\n' + target + '\n' + profit + '\n' + period
+                content = content.replace('/', '').replace('#', '')
                 logging.info(content)
-                send_pushplus(title, content, 'VIP001')
+                res = send_pushplus(title, content, 'VIP001')
+                logging.info('返回:' + str(res.text))
                 return
         else:
             logging.info("premium1:{}".format(event.raw_text))
@@ -448,8 +450,10 @@ async def premium(event):
                     index = index + 1
                     content = content + "目标{}：{}\n".format(str(index), str(target))
                 content = content + "\n止损：{}".format(str(stop_loss))
+                content = content.replace('/', '').replace('#', '')
                 logging.info(content)
-                send_pushplus(title, content, 'VIP001')
+                res = send_pushplus(title, content, 'VIP001')
+                logging.info('返回:' + str(res.text))
         else:
             logging.info("premium2:{}".format(event.raw_text))
     except Exception as e:

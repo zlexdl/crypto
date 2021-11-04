@@ -120,6 +120,10 @@ def send_pushplus(title, content, topic):
     payload = {}
     headers = {}
     requests.packages.urllib3.disable_warnings()
-    requests.get(url, params=payload, headers=headers, verify=False)
-    print('推送成功:' + url)
-# send_pushplus('test3', '如果想开启下单成功后消息推送，则将 enable 设置为 true，默认为 false 不开启推送', 'announcements')
+    print('url:' + url)
+    response = requests.get(url, params=payload, headers=headers, verify=False)
+    # if json.loads(response.text)['code'] != 200:
+
+    print('返回:' + str(response.text))
+    return response
+# send_pushplus('测试标题', '这只是个测试，202111141003', 'VIP001')
