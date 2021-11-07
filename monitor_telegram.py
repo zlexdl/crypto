@@ -397,7 +397,7 @@ async def my_event_handler(event):
     elif event.chat_id == -1001385300019:
         logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
 
-        await premium(event)
+        premium(event)
     else:
         print("========================>Other")
 
@@ -407,7 +407,7 @@ async def my_event_handler(event):
     # sendMail(mail_subject, mail_contents)
 
 
-async def premium(event):
+def premium(event):
     symbol = ''
     between = ''
     target = ''
