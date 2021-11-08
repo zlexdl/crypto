@@ -38,6 +38,7 @@ def send_mail(tweet):
     mail_user = global_config.getRaw('mail', 'mail_user')
     mail_pass = global_config.getRaw('mail', 'mail_pass')
 
+    # '393899161@qq.com'
     sender = 'bsv_whale_alert@126.com'
     receivers = ['6585852@qq.com', '393899161@qq.com']  # 接收邮件，可设置为你的QQ邮箱或者其他邮箱
     message = MIMEMultipart()
@@ -83,18 +84,10 @@ while True:
 
         zlexdl = api.user_timeline(api.get_user('zlexdl').id, count=3)
         CryptoFaibik = api.user_timeline(api.get_user('CryptoFaibik').id, count=3)
-        RadioCacaNFT = api.user_timeline(api.get_user('RadioCacaNFT').id, count=3)
-        bsc_daily = api.user_timeline(api.get_user('bsc_daily').id, count=3)
-        bakery_swap = api.user_timeline(api.get_user('bakery_swap').id, count=3)
-        VenusProtocol = api.user_timeline(api.get_user('VenusProtocol').id, count=3)
-        cz_binance = api.user_timeline(api.get_user('cz_binance').id, count=3)
-        Binance = api.user_timeline(api.get_user('Binance').id, count=3)
-        TheBinanceNFT = api.user_timeline(api.get_user('TheBinanceNFT').id, count=3)
         ElemonGame = api.user_timeline(api.get_user('ElemonGame').id, count=3)
         top7ico = api.user_timeline(api.get_user('top7ico').id, count=3)
-        yooshi_official = api.user_timeline(api.get_user('yooshi_official').id, count=3)
         print("---------------------public_tweets")
-        public_tweets = zlexdl + CryptoFaibik + RadioCacaNFT + bsc_daily + bakery_swap + VenusProtocol + cz_binance + Binance + TheBinanceNFT + ElemonGame + top7ico + yooshi_official
+        public_tweets = zlexdl + CryptoFaibik + ElemonGame + top7ico
 
     except Exception as e:
         print("sleep 60s")
