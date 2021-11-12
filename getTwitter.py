@@ -89,8 +89,9 @@ while True:
         ElemonGame = api.user_timeline(screen_name='ElemonGame', count=3)
         top7ico = api.user_timeline(screen_name='top7ico', count=3)
         ZssBecker = api.user_timeline(screen_name='ZssBecker', count=3)
+        yooshi_official = api.user_timeline(screen_name='yooshi_official', count=3)
         print("---------------------public_tweets")
-        public_tweets = zlexdl + CryptoFaibik + ElemonGame + top7ico + ZssBecker
+        public_tweets = zlexdl + CryptoFaibik + ElemonGame + top7ico + ZssBecker + yooshi_official
 
     except Exception as e:
         print(str(e))
