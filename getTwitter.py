@@ -84,7 +84,7 @@ while True:
         # public_tweets = api.home_timeline(count=50)
         # public_tweets = api.list_timeline(list_id=1413685290284163076,count=50)
 
-        zlexdl = api.user_timeline(screen_name='zlexdl', count=3)
+        # zlexdl = api.user_timeline(screen_name='zlexdl', count=3)
         CryptoFaibik = api.user_timeline(screen_name='CryptoFaibik', count=3)
         ElemonGame = api.user_timeline(screen_name='ElemonGame', count=3)
         top7ico = api.user_timeline(screen_name='top7ico', count=3)
@@ -92,7 +92,7 @@ while True:
         yooshi_official = api.user_timeline(screen_name='yooshi_official', count=3)
         Aleph__Zero = api.user_timeline(screen_name='Aleph__Zero', count=3)
         print("---------------------public_tweets")
-        public_tweets = zlexdl + CryptoFaibik + ElemonGame + top7ico + ZssBecker + yooshi_official + Aleph__Zero
+        public_tweets = CryptoFaibik + ElemonGame + top7ico + ZssBecker + yooshi_official + Aleph__Zero
 
     except Exception as e:
         print(str(e))
