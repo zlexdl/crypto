@@ -11,6 +11,7 @@ import wget
 import os
 from config import global_config
 from util import send_pushplus
+import translators as ts
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
@@ -26,7 +27,7 @@ auth = tweepy.OAuthHandler(global_config.getRaw('twitter', 'consumer_key'),
 auth.set_access_token(global_config.getRaw('twitter', 'key'),
                       global_config.getRaw('twitter', 'secret'))
 
-api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+api = tweepy.API(auth)
 
 
 # user = api.get_user('CryptoNewton')
@@ -48,6 +49,7 @@ def send_mail(tweet):
     subject = tweet.user.screen_name
     message['Subject'] = Header(subject, 'utf-8')
     text = MIMEText(tweet.text)
+
     message.attach(text)
     media = tweet.entities.get('media', [])
     if len(media) > 0:
@@ -82,14 +84,16 @@ while True:
         # public_tweets = api.home_timeline(count=50)
         # public_tweets = api.list_timeline(list_id=1413685290284163076,count=50)
 
-        zlexdl = api.user_timeline(api.get_user('zlexdl').id, count=3)
-        CryptoFaibik = api.user_timeline(api.get_user('CryptoFaibik').id, count=3)
-        ElemonGame = api.user_timeline(api.get_user('ElemonGame').id, count=3)
-        top7ico = api.user_timeline(api.get_user('top7ico').id, count=3)
+        zlexdl = api.user_timeline(screen_name='zlexdl', count=3)
+        CryptoFaibik = api.user_timeline(screen_name='CryptoFaibik', count=3)
+        ElemonGame = api.user_timeline(screen_name='ElemonGame', count=3)
+        top7ico = api.user_timeline(screen_name='top7ico', count=3)
+        ZssBecker = api.user_timeline(screen_name='ZssBecker', count=3)
         print("---------------------public_tweets")
-        public_tweets = zlexdl + CryptoFaibik + ElemonGame + top7ico
+        public_tweets = zlexdl + CryptoFaibik + ElemonGame + top7ico + ZssBecker
 
     except Exception as e:
+        print(str(e))
         print("sleep 60s")
         time.sleep(60)
         continue
@@ -110,13 +114,15 @@ while True:
         utcTime_minutes = datetime.utcnow() - timedelta(minutes=5)
         print(tweet.text)
         print("---------------------")
-        print(tweet.created_at)
-        print(utcTime_minutes)
+        print(tweet.created_at.replace(tzinfo=None))
+        print(utcTime_minutes.replace(microsecond=0))
         print("---------------------")
         # send_mail(tweet)
-        if tweet.created_at >= utcTime_minutes:
+        if tweet.created_at.replace(tzinfo=None) >= utcTime_minutes.replace(microsecond=0):
             # send_mail(tweet)
-            send_pushplus(tweet.user.screen_name, tweet.text, 'TW001')
+            tran = ts.google(tweet.text, from_language='en', to_language='zh-CN')
+            text = tweet.text + '\n\n-----------------------\n\n' + tran
+            send_pushplus(tweet.user.screen_name, text, 'TW001')
 
     print("time.sleep(300) start time=" + str(datetime.utcnow()))
     time.sleep(300)
