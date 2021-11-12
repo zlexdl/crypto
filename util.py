@@ -116,7 +116,7 @@ def send_wechat(message):
 
 def send_pushplus(title, content, topic):
     """推送信息到微信"""
-    url = 'https://www.pushplus.plus/send?token={}&title={}&template=html&topic={}&content={}'.format(global_config.getRaw('pushplus', 'token'), title, topic, content)
+    url = 'https://www.pushplus.plus/send?token={}&title={}&template=html&topic={}&content={}'.format(global_config.getRaw('pushplus', 'token'), title, topic, content.replace('#', ''))
     payload = {}
     headers = {}
     requests.packages.urllib3.disable_warnings()
@@ -126,4 +126,4 @@ def send_pushplus(title, content, topic):
 
     print('返回:' + str(response.text))
     return response
-# send_pushplus('测试标题', '这只是个测试，202111141003', 'VIP001')
+# send_pushplus('测试标题', '#:/这只是个#测试，202111141003/', 'VIP002')
