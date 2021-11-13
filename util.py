@@ -126,4 +126,20 @@ def send_pushplus(title, content, topic):
 
     print('返回:' + str(response.text))
     return response
+
+def send_pushplus_wx(title, content, webhook):
+    """推送信息到微信"""
+    url = 'http://www.pushplus.plus/send'
+
+    data = { "token": global_config.getRaw('pushplus', 'token'),  "title": title,  "content": content, "channel": "webhook",  "webhook": webhook  }
+
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    requests.packages.urllib3.disable_warnings()
+
+    response = requests.post(url, data=json.dumps(data), headers=headers, verify=False)
+
+    print('返回:' + str(response))
+    return response
 # send_pushplus('测试标题', '#:/这只是个#测?试&，202111141003/', 'VIP002')
+
+# send_pushplus_wx('测试标题', '#:/这只是个#测?试&，202111141003/', 'dbzs')

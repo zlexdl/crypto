@@ -21,7 +21,8 @@ import time
 from config import global_config
 from monitor_logger import logging
 from telethon.tl.types import PeerChannel
-from util import send_pushplus
+from util import send_pushplus, send_pushplus_wx
+import translators as ts
 
 is_test = 0
 WHALE_SUSHI = 'sushiwhale'
@@ -32,6 +33,7 @@ PUMP_DETECTOR = 'cointrendz_pumpdetector'
 CRYPTO_COVE_PREMIUM = 'CryptoCovePremium'
 JIJIFABU_NOTICE00 = 'jijifabu_notice00'
 NOOBTRADINGCLUB = 'noobtradingclub'
+JAMMAS100X = 'jammas100x'
 
 IMAGES_FOLDER = "./images/"
 
@@ -256,6 +258,23 @@ def jijifabu_notice00(event):
         print("Error:" + str(e))
         logging.error("Error:" + str(e))
 
+def jammas100x(event):
+    try:
+
+        tran = ''
+        try:
+            tran = ts.google(event.raw_text, from_language='en', to_language='zh-CN')
+        except Exception as e:
+            tran = ''
+            print(str(e))
+
+        content = event.raw_text + '\n\n-----\n\n' + tran
+        send_pushplus_wx('jammas100x', content.replace("\n", "\r\n"), 'dbzs')
+        logging.info("已发送jammas100x:{}".format(content))
+    except Exception as e:
+        print("Error:" + str(e))
+        logging.error("Error:" + str(e))
+
 
 def pump_detector(event):
     try:
@@ -374,6 +393,7 @@ async def my_event_handler(event):
     # print(event.chat.username)
 
     if event.chat_id == -1001329310076:
+
         # await premium(event)
         logging.info('test:' + event.raw_text)
         # sendMail('test', event.raw_text)
@@ -389,6 +409,9 @@ async def my_event_handler(event):
     elif event.chat.username == JIJIFABU_NOTICE00:
         logging.info("JIJIFABU_NOTICE00")
         jijifabu_notice00(event)
+    elif event.chat.username == JAMMAS100X:
+        logging.info("JAMMAS100X")
+        jammas100x(event)
     elif event.chat.username == NOOBTRADINGCLUB:
         logging.info("NOOBTRADINGCLUB")
         filename = "images/{}.jpg".format(datetime.now().strftime("%Y%m%d-%H%M%S.%f"))
@@ -462,6 +485,7 @@ def premium(event):
     sendMail('[VIP]{}'.format(symbol), event.raw_text)
 
 
+client.add_event_handler(my_event_handler, events.NewMessage(chats=JAMMAS100X))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=JIJIFABU_NOTICE00))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=NOOBTRADINGCLUB))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_SUSHI))
