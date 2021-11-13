@@ -122,7 +122,12 @@ while True:
         # send_mail(tweet)
         if tweet.created_at.replace(tzinfo=None) >= utcTime_minutes.replace(microsecond=0):
             # send_mail(tweet)
-            tran = ts.google(tweet.text, from_language='en', to_language='zh-CN')
+            tran = ''
+            try:
+                tran = ts.google(tweet.text, from_language='en', to_language='zh-CN')
+            except Exception as e:
+                tran = ''
+                print(str(e))
             text = tweet.text + '\n\n-----------------------\n\n' + tran
             send_pushplus(tweet.user.screen_name, text, 'TW001')
 
