@@ -409,9 +409,9 @@ async def my_event_handler(event):
     elif event.chat.username == JIJIFABU_NOTICE00:
         logging.info("JIJIFABU_NOTICE00")
         jijifabu_notice00(event)
-    elif event.chat.username == JAMMAS100X:
-        logging.info("JAMMAS100X")
-        jammas100x(event)
+    # elif event.chat.username == JAMMAS100X:
+    #     logging.info("JAMMAS100X")
+    #     jammas100x(event)
     elif event.chat.username == NOOBTRADINGCLUB:
         logging.info("NOOBTRADINGCLUB")
         filename = "images/{}.jpg".format(datetime.now().strftime("%Y%m%d-%H%M%S.%f"))

@@ -10,7 +10,7 @@ from email.header import Header
 import wget
 import os
 from config import global_config
-from util import send_pushplus
+from util import send_pushplus, send_pushplus_wx
 import translators as ts
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
@@ -91,8 +91,10 @@ while True:
         ZssBecker = api.user_timeline(screen_name='ZssBecker', count=3, tweet_mode='extended')
         HoppyMeme = api.user_timeline(screen_name='HoppyMeme', count=3, tweet_mode='extended')
         Aleph__Zero = api.user_timeline(screen_name='Aleph__Zero', count=3, tweet_mode='extended')
+        Bitpan8 = api.user_timeline(screen_name='Bitpan8', count=3, tweet_mode='extended')
+        RaccoonHKG = api.user_timeline(screen_name='RaccoonHKG', count=3, tweet_mode='extended')
         print("---------------------public_tweets")
-        public_tweets = CryptoFaibik + ElemonGame + top7ico + ZssBecker + HoppyMeme + Aleph__Zero
+        public_tweets = CryptoFaibik + ElemonGame + top7ico + ZssBecker + HoppyMeme + Aleph__Zero + RaccoonHKG
 
     except Exception as e:
         print(str(e))
@@ -129,7 +131,8 @@ while True:
                 tran = ''
                 print(str(e))
             text = tweet.full_text + '\n\n-----------------------\n\n' + tran
-            send_pushplus(tweet.user.screen_name, text, 'TW001')
+            # send_pushplus(tweet.user.screen_name, text, 'TW001')
+            send_pushplus_wx(tweet.user.screen_name, text.replace("\n", "\r\n"), 'dbzs')
 
     print("time.sleep(300) start time=" + str(datetime.utcnow()))
     time.sleep(300)
