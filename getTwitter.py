@@ -132,7 +132,7 @@ while True:
             except Exception as e:
                 tran = ''
                 print(str(e))
-            text = tweet.full_text + '\n\n-----------------------\n\n' + tran
+            text = tran+ '\n\n-----------------------\n\n' + tweet.full_text
             # send_pushplus(tweet.user.screen_name, text, 'TW001')
             send_pushplus_wx(tweet.user.screen_name, text.replace("\n", "\r\n"), 'dbzs')
 
