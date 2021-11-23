@@ -40,8 +40,9 @@ class CmcCoinInfo(Base):
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
-while True:
-    url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start=1&limit=5000&convert=USD&sort=date_added'
+# while True:
+def main(start):
+    url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?start={}&limit=5000&convert=USD&sort=date_added'.format(start)
 
     print(datetime.now())
     try:
@@ -155,7 +156,10 @@ while True:
         print("Error: " + str(e))
         print("sleep 300s")
         time.sleep(300)
-        continue
+        # continue
     print("sleep 300s")
     time.sleep(300)
 print("@@@@@@@@@@@@@@@@@@@@END@@@@@@@@@@@@@@@@@@@@@@")
+
+main(1)
+main(5001)
