@@ -95,8 +95,9 @@ while True:
         RaccoonHKG = api.user_timeline(screen_name='RaccoonHKG', count=3, tweet_mode='extended')
         blokpad = api.user_timeline(screen_name='blokpad', count=3, tweet_mode='extended')
         bloktopia = api.user_timeline(screen_name='bloktopia', count=3, tweet_mode='extended')
+        fantomstarter = api.user_timeline(screen_name='fantomstarter', count=3, tweet_mode='extended')
         print("---------------------public_tweets")
-        public_tweets = CryptoFaibik + ElemonGame + top7ico + Candysong9 + HoppyMeme + ibcig + RaccoonHKG + blokpad +bloktopia
+        public_tweets = CryptoFaibik + ElemonGame + top7ico + Candysong9 + HoppyMeme + ibcig + RaccoonHKG + blokpad +bloktopia + fantomstarter
 
     except Exception as e:
         print(str(e))
