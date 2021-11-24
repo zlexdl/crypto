@@ -135,7 +135,8 @@ while True:
                 print(str(e))
             text = tran+ '\n\n-----------------------\n\n' + tweet.full_text
             # send_pushplus(tweet.user.screen_name, text, 'TW001')
-            send_pushplus_wx(tweet.user.screen_name, text.replace("\n", "\r\n"), 'dbzs')
+            title = tweet.user.screen_name + ':' + tran
+            send_pushplus_wx(title[0:40], text.replace("\n", "\r\n"), 'dbzs')
 
     print("time.sleep(300) start time=" + str(datetime.utcnow()))
     time.sleep(300)

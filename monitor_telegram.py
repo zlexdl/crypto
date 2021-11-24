@@ -406,17 +406,17 @@ async def my_event_handler(event):
         read_message(raw_text, event.chat.username)
     elif event.chat.username == PUMP_DETECTOR:
         pump_detector(event)
-    elif event.chat.username == JIJIFABU_NOTICE00:
-        logging.info("JIJIFABU_NOTICE00")
-        jijifabu_notice00(event)
+    # elif event.chat.username == JIJIFABU_NOTICE00:
+    #     logging.info("JIJIFABU_NOTICE00")
+    #     jijifabu_notice00(event)
     # elif event.chat.username == JAMMAS100X:
     #     logging.info("JAMMAS100X")
     #     jammas100x(event)
-    elif event.chat.username == NOOBTRADINGCLUB:
-        logging.info("NOOBTRADINGCLUB")
-        filename = "images/{}.jpg".format(datetime.now().strftime("%Y%m%d-%H%M%S.%f"))
-        await client.download_media(event.media, filename)
-        send_mail(event, filename)
+    # elif event.chat.username == NOOBTRADINGCLUB:
+    #     logging.info("NOOBTRADINGCLUB")
+    #     filename = "images/{}.jpg".format(datetime.now().strftime("%Y%m%d-%H%M%S.%f"))
+    #     await client.download_media(event.media, filename)
+    #     send_mail(event, filename)
     elif event.chat_id == -1001385300019:
         logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
 
