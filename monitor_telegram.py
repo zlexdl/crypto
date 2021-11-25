@@ -32,7 +32,7 @@ WHALE_TEST = 'test_zlexdl'
 PUMP_DETECTOR = 'cointrendz_pumpdetector'
 CRYPTO_COVE_PREMIUM = 'CryptoCovePremium'
 JIJIFABU_NOTICE00 = 'jijifabu_notice00'
-NOOBTRADINGCLUB = 'noobtradingclub'
+IBCIGIDO = 'ibcigIDO'
 JAMMAS100X = 'jammas100x'
 WHITELIST1 = 'whitelist1'
 
@@ -178,10 +178,18 @@ def send_mail(event, photo):
 
     message['From'] = "TW<bsv_whale_alert@126.com>"
     message['To'] = "6585852@qq.com"
-    subject = 'NOOBTRADINGCLUB'
+    subject = 'IBCIGIDO'
     message['Subject'] = Header(subject, 'utf-8')
-    text = MIMEText(event.raw_text)
-    message.attach(text)
+
+    tran = ''
+    try:
+        tran = ts.google(event.raw_text, from_language='en', to_language='zh-CN')
+    except Exception as e:
+        tran = ''
+        print(str(e))
+    text = tran + '\n\n-----------------------\n\n' + event.raw_text
+
+    message.attach(MIMEText(text.replace("\n", "\r\n")))
     if os.path.isfile(photo):
         image_url = photo
         logging.info("---------------------" + image_url)
@@ -404,11 +412,17 @@ print(client.get_me())
 
 async def my_event_handler(event):
     logging.info("Monitor whales start")
+
     # logging.info(event.chat_id)
     # print(event.raw_text)
     # print(event.chat.username)
 
     if event.chat_id == -1001329310076:
+        # logging.info("IBCIGIDO")
+        # filename = "images/{}.jpg".format(datetime.now().strftime("%Y%m%d-%H%M%S.%f"))
+        # await client.download_media(event.media, filename)
+        # send_mail(event, filename)
+
         # whitelist1(event)
         # await premium(event)
         logging.info('test:' + event.raw_text)
@@ -430,11 +444,11 @@ async def my_event_handler(event):
     # elif event.chat.username == JAMMAS100X:
     #     logging.info("JAMMAS100X")
     #     jammas100x(event)
-    # elif event.chat.username == NOOBTRADINGCLUB:
-    #     logging.info("NOOBTRADINGCLUB")
-    #     filename = "images/{}.jpg".format(datetime.now().strftime("%Y%m%d-%H%M%S.%f"))
-    #     await client.download_media(event.media, filename)
-    #     send_mail(event, filename)
+    elif event.chat.username == IBCIGIDO:
+        logging.info("IBCIGIDO")
+        filename = "images/{}.jpg".format(datetime.now().strftime("%Y%m%d-%H%M%S.%f"))
+        await client.download_media(event.media, filename)
+        send_mail(event, filename)
     elif event.chat_id == -1001385300019:
         logging.info('[VIP]COVE PREMIUM:' + event.raw_text)
 
@@ -504,13 +518,12 @@ def premium(event):
 
 
 # client.add_event_handler(my_event_handler, events.NewMessage(chats=JAMMAS100X))
-# client.add_event_handler(my_event_handler, events.NewMessage(chats=JIJIFABU_NOTICE00))
 
+client.add_event_handler(my_event_handler, events.NewMessage(chats=IBCIGIDO))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHITELIST1))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_SUSHI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_UNI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_PANCAKE))
-
 client.add_event_handler(my_event_handler, events.NewMessage(chats=PUMP_DETECTOR))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001385300019)]))
 
