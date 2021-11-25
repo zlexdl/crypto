@@ -34,6 +34,7 @@ CRYPTO_COVE_PREMIUM = 'CryptoCovePremium'
 JIJIFABU_NOTICE00 = 'jijifabu_notice00'
 NOOBTRADINGCLUB = 'noobtradingclub'
 JAMMAS100X = 'jammas100x'
+WHITELIST1 = 'whitelist1'
 
 IMAGES_FOLDER = "./images/"
 
@@ -258,6 +259,21 @@ def jijifabu_notice00(event):
         print("Error:" + str(e))
         logging.error("Error:" + str(e))
 
+def whitelist1(event):
+    try:
+        tran = ''
+        try:
+            tran = ts.google(event.raw_text, from_language='auto', to_language='zh-CN')
+        except Exception as e:
+            tran = ''
+            print(str(e))
+        text = tran + '\n\n-----------------------\n\n' + event.raw_text
+        send_pushplus_wx('whitelist1', text.replace("\n", "\r\n"), 'dbzs')
+        logging.info("已发送{}的公告".format('whitelist1'))
+    except Exception as e:
+        print("Error:" + str(e))
+        logging.error("Error:" + str(e))
+
 def jammas100x(event):
     try:
 
@@ -393,7 +409,7 @@ async def my_event_handler(event):
     # print(event.chat.username)
 
     if event.chat_id == -1001329310076:
-
+        # whitelist1(event)
         # await premium(event)
         logging.info('test:' + event.raw_text)
         # sendMail('test', event.raw_text)
@@ -406,6 +422,8 @@ async def my_event_handler(event):
         read_message(raw_text, event.chat.username)
     elif event.chat.username == PUMP_DETECTOR:
         pump_detector(event)
+    elif event.chat.username == WHITELIST1:
+        whitelist1(event)
     # elif event.chat.username == JIJIFABU_NOTICE00:
     #     logging.info("JIJIFABU_NOTICE00")
     #     jijifabu_notice00(event)
@@ -485,15 +503,17 @@ def premium(event):
     sendMail('[VIP]{}'.format(symbol), event.raw_text)
 
 
-client.add_event_handler(my_event_handler, events.NewMessage(chats=JAMMAS100X))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=JIJIFABU_NOTICE00))
-client.add_event_handler(my_event_handler, events.NewMessage(chats=NOOBTRADINGCLUB))
+# client.add_event_handler(my_event_handler, events.NewMessage(chats=JAMMAS100X))
+# client.add_event_handler(my_event_handler, events.NewMessage(chats=JIJIFABU_NOTICE00))
+
+client.add_event_handler(my_event_handler, events.NewMessage(chats=WHITELIST1))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_SUSHI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_UNI))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=WHALE_PANCAKE))
 
 client.add_event_handler(my_event_handler, events.NewMessage(chats=PUMP_DETECTOR))
 client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001385300019)]))
+
 client.add_event_handler(my_event_handler, events.NewMessage(chats=[PeerChannel(-1001329310076)]))
 
 client.start()
